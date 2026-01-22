@@ -174,15 +174,6 @@ for i in range(len(sequence_dict)):
             profile.append("0")
         else:
             profile.append("1")
-
-    # go through the rRNAs
-#     for rrna in rrna_list:
-#         if rrna in all_pseudogenes[i]:
-#             profile.append("2")
-#         elif rrna in all_present_genes[i]:
-#             profile.append("0")
-#         else:
-#             profile.append("1")
             
     # go through the rRNAs
     for j in range(len(rrna_list)):
