@@ -122,7 +122,7 @@ geneList = gene_list[:79]
 
 # have only seen this style in one genbank file (Sesamum) but it's strange and must be spelled out in full
 trna_sesamum_list = ['tRNA-Ala (UGC)', 'tRNA-Cys (GCA)', 'tRNA-Asp (GUC)', 'tRNA-Glu (UUC)', 'tRNA-Phe (GAA)', 'tRNA-fM (CAU)', 'tRNA-Gly (GCC)', 'tRNA-Gly (UCC)', 'tRNA-His (GUG)', 'tRNA-Ile (CAU)', 'tRNA-Ile (GAU)', 'tRNA-Lys (UUU)', 'tRNA-Leu (CAA)', 'tRNA-Leu (UAA)', 'tRNA-Leu (UAG)', 'tRNA-Met (CAU)', 'tRNA-Asn (GUU)', 'tRNA-Pro (UGG)', 'tRNA-Gln (UUG)', 'tRNA-Arg (ACG)', 'tRNA-Arg (UCU)', 'tRNA-Ser (GCU)', 'tRNA-Ser (GGA)', 'tRNA-Ser (UGA)', 'tRNA-Thr (GGU)', 'tRNA-Thr (UGU)', 'tRNA-Val (GAC)', 'tRNA-Val (UAC)', 'tRNA-Trp (CCA)', 'tRNA-Tyr (GUA)']
-UUC)
+
 # write out alternative rrna gene name formats
 rrna_word_list = ['23S rRNA', '4.5S rRNA', '5S rRNA', '16S rRNA']
 rrn_alternate_list = ['rrn16', 'rrn4.5s', 'rrn5s', 'rrn23s']
