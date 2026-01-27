@@ -143,7 +143,7 @@ for directory in blast_folders:
 
         # no hits in this file
         if not blastResults:
-            noHitsFiles.append(f"{genome_files}/{filename}")
+            noHitsFiles.append(os.path.join(os.path.basename(directory), filename))
             continue
 
         # split blast hits into columns
@@ -223,7 +223,7 @@ for directory in blast_folders:
             genomeBoundList.append((start, end, strand))
 
             if end - start > args.ir_cutoff:
-                somethingWrongWithTheseFiles.append(f"{genome_files}/{filename}")
+                somethingWrongWithTheseFiles.append(os.path.join(os.path.basename(directory), filename))
 
         # -------------------------------------------------
         # read test plastid genome FASTA
