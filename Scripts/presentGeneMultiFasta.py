@@ -1,6 +1,11 @@
-# this script takes a big .gbk file as input and outputs one multifasta file per gene
-# the multi fasta files are not aligned
-# it handles a bunch of different spellings for gene names
+########################################################################################################################################################
+# This script:
+# 1. Reads in a multi-sequence .gbk file
+# 2. Parses annotations in the .gbk file by taxon
+# 3. Creates one output multifasta file per gene (specified in gene_list) contaning sequences for all taxa where that gene was annotated as present
+# 4. The multifasta files are not aligned 
+########################################################################################################################################################
+
 
 import argparse #command line function
 import os #enables making new directories and moving around the directory structure
@@ -13,8 +18,7 @@ from Bio import SeqIO #for parsing genbank files
 
 # set up argument parsing for the command line
 parser = argparse.ArgumentParser(
-    description="Extract chloroplast genes from a GenBank file into a multi FASTA file per gene"
-)
+    description="Extract chloroplast genes from a GenBank file into a multifasta file per gene")
 
 # input GenBank file (required)
 parser.add_argument(

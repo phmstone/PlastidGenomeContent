@@ -19,29 +19,25 @@ os.environ["SSL_CERT_FILE"] = certifi.where()
 # -----------------------------
 
 parser = argparse.ArgumentParser(
-    description="Download GenBank records from a list of accession IDs"
-)
+    description="Download GenBank records from a list of accession IDs")
 
 # user has to input their own email address in order to download from genbank
 parser.add_argument(
     "--email",
     required=True,
-    help="Email address (required by NCBI Entrez)"
-)
+    help="Email address (required by NCBI Entrez)")
 
 # user has to give input file
 parser.add_argument(
     "--input",
     required=True,
-    help="Text file containing GenBank accession IDs (one per line)"
-)
+    help="Text file containing GenBank accession IDs (one per line)")
 
 # user has to give output file name
 parser.add_argument(
     "--output",
     required=True,
-    help="Output GenBank file (.gbk)"
-)
+    help="Output GenBank file (.gbk)")
 
 # user can give their own time delay between requesting .gbk downloads from genbank if they want
 # 1s is the default 
@@ -49,8 +45,7 @@ parser.add_argument(
     "--delay",
     type=float,
     default=1.0,
-    help="Delay in seconds between NCBI requests (default: 1)"
-)
+    help="Delay in seconds between NCBI requests (default: 1)")
 
 # enables above inputs to be parsed 
 args = parser.parse_args()

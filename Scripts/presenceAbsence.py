@@ -21,7 +21,7 @@ parser.add_argument("--input", required=True, help="Input GenBank (.gbk) file")
 parser.add_argument("--tsv", required=True, help="Output TSV file for gene profiles")
 
 # Optional argument
-parser.add_argument("-n", "--nexus", help="Optional Nexus-style output text file")
+parser.add_argument("-n", "--nexus", help="Optional nexus-style output text file")
 
 # Parse the arguments
 args = parser.parse_args()
