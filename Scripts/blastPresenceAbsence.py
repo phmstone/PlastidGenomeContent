@@ -1,15 +1,16 @@
-# BLAST-based recovery of missing plastid genes.
+# blast-based recovery of missing plastid genes.
 # Need to have run a bunch of other scripts before
 
-# Pipeline:
-# 1. Read presence/absence TSV
-# 2. Identify taxa missing one or more genes
-# 3. Download reference GenBank files (input list needed)
-# 4. Extract reference gene sequences
-# 5. Download plastid FASTAs for missing taxa
-# 6. Make BLAST databases
-# 7. BLAST missing genes against plastomes
-
+####################################################################################################
+# This script:
+# 1. Reads the presence/absence TSV
+# 2. Identifies taxa missing functional copies of one or more genes
+# 3. Downloads the reference GenBank files (input list needed but can also be generated)
+# 4. Extracts reference gene sequences
+# 5. Downloads plastid fasta files for taxa with "missing" genes
+# 6. Makes blast databases
+# 7. Runs blast for "missing" genes with reference gene sequences and plastid fasta files
+####################################################################################################
 
 import argparse
 import os
@@ -26,7 +27,7 @@ os.environ["SSL_CERT_FILE"] = certifi.where()
 # ----------------------------------------------------------
 
 parser = argparse.ArgumentParser(
-    description="Recover missing plastid genes using BLAST")
+    description="Recover missing plastid genes using blast")
 
 parser.add_argument(
     "--input",
@@ -36,7 +37,7 @@ parser.add_argument(
 parser.add_argument(
     "--email",
     required=True,
-    help="Email address for NCBI Entrez")
+    help="Email address for NCBI account")
 
 parser.add_argument(
     "--reference-ids",
@@ -46,7 +47,7 @@ parser.add_argument(
 parser.add_argument(
     "--reference-outdir",
     default="Blast/ReferenceGeneSequences",
-    help="Directory to store reference gene FASTAs")
+    help="Directory to store reference gene fastas")
 
 parser.add_argument(
     "--reference-gbk-dir",
@@ -56,17 +57,17 @@ parser.add_argument(
 parser.add_argument(
     "--plastid-fasta-dir",
     default="Blast/PlastidSequences",
-    help="Directory to store plastid FASTAs")
+    help="Directory to store plastid fasta files")
 
 parser.add_argument(
     "--blast-db-dir",
     default="Blast/Databases",
-    help="Directory where BLAST databases will be created")
+    help="Directory where blast databases will be made")
 
 parser.add_argument(
     "--blast-out",
     default="Blast/Results",
-    help="Directory for BLAST output")
+    help="Directory for blast outputs")
 
 args = parser.parse_args()
 
@@ -332,7 +333,7 @@ for fasta_file in os.listdir(args.plastid_fasta_dir):
     if os.path.exists(db_prefix + ".nhr"):
         continue
 
-    print(f"Making BLAST database for {accession}")
+    print(f"Making blast database for {accession}")
 	
 	# make the blast database
     makeblastdb_cmd = [
@@ -363,7 +364,7 @@ for gene_idx, taxa in enumerate(missing_by_gene):
     if not os.path.exists(query_fasta):
         continue
 
-    # run BLAST for each taxon missing this gene
+    # run blast for each taxon missing this gene
     for accession in taxa:
         genome_outdir = os.path.join(args.blast_out, accession)
         os.makedirs(genome_outdir, exist_ok=True)

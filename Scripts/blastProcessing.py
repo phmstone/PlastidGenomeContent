@@ -1,18 +1,18 @@
+####################################################################################################
+# This script:
+# 1. Adds reference gene sequences to gene-specific alignment FASTA files
+# 2. Parses blast tabular output files
+# 3. Extracts matching gene regions from plastid genomes
+# 4. Handles strand orientation correctly
+# 5. Appends extracted sequences to alignment files
+####################################################################################################
+
 import os
 import re
 import argparse
 import numpy as np
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
-
-###############################################################################
-# This program:
-# 1. Adds reference gene sequences to gene-specific alignment FASTA files
-# 2. Parses BLAST tabular output files
-# 3. Extracts matching gene regions from plastid genomes
-# 4. Handles strand orientation correctly
-# 5. Appends extracted sequences to alignment files
-###############################################################################
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -22,13 +22,13 @@ from Bio.SeqRecord import SeqRecord
 def parse_args():
     parser = argparse.ArgumentParser(
         description=(
-            "Extract gene sequences from plastid genomes using BLAST results "
+            "Extract gene sequences from plastid genomes using blast results "
             "and append them to gene-specific alignment FASTA files."))
 
     parser.add_argument(
         "--blast-dir",
         required=True,
-        help="Directory containing BLAST result subfolders")
+        help="Directory containing blast result subfolders")
 
     parser.add_argument(
         "--reference-dir",
@@ -46,10 +46,10 @@ def parse_args():
         help="Directory for output alignment FASTA files")
 
     parser.add_argument(
-        "--flank",
+        "--flanking-region",
         type=int,
         default=0,
-        help="Number of base pairs to extract on each side of BLAST hit (default: 0)")
+        help="Number of base pairs to extract on each side of blast hit (default: 0)")
 
     parser.add_argument(
         "--ir-cutoff",
@@ -120,20 +120,20 @@ blast_folders = [
     if os.path.isdir(os.path.join(args.blast_dir, d))
 ]
 
-# loop through each plastid genome BLAST folder
+# loop through each plastid genome blast folder
 for directory in blast_folders:
 
     somethingWrongWithTheseFiles = []
     noHitsFiles = []
 
-    # loop through each gene BLAST file
+    # loop through each gene blast file
     for filename in os.listdir(directory):
         if not filename.endswith(".txt"):
             continue
 
         blastResults = []
 
-        # read BLAST output
+        # read blast output
         with open(os.path.join(directory, filename)) as fh:
             for line in fh:
                 line = line.strip()
@@ -167,7 +167,7 @@ for directory in blast_folders:
         genomeBounds = []
         strands = []
 
-        # parse each BLAST hit
+        # parse each blast hit
         for row in tabularResults:
             q_start = int(row[3])
             q_end   = int(row[4])

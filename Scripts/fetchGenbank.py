@@ -1,5 +1,9 @@
-# This script takes an input text file of genbank IDs (one per line)
-# uses this input to download all the .gbk files into one big .gbk file
+####################################################################################################
+# This script:
+# 1. Takes a .txt file of genbank IDs as input (one per line)
+# 2. Downloads a .gbk file containing all .gbk records for the IDs specified in the .txt file
+####################################################################################################
+
 
 import os # for interacting with operating system of computer
 import time # allows 1s delay between downloading genbank files

@@ -1,4 +1,12 @@
-# -------------------- Import Libraries --------------------
+####################################################################################################
+# This script:
+# 1. Reads in a multi-sequence .gbk file
+# 2. Parses annotations in the .gbk file by taxon
+# 3. Creates a TSV stating whether a gene is present, missing, or pseudogenized according to the .gbk annotations
+# 4. Also makes a text block that can be input into a nexus file for character state change mapping
+####################################################################################################
+
+
 import argparse
 from Bio import SeqIO
 
