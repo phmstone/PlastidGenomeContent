@@ -23,33 +23,19 @@ from collections import defaultdict
 # Command line arguments
 # ---------------------------------------------------------------------------------------------------
 
-# should make it less interactive so it just looks in blast directory for pre-defined directory names
-
 def parse_args():
     parser = argparse.ArgumentParser(
         description=(
             "Extract gene sequences from plastid genomes using blast results "
             "and append them to gene-specific alignment FASTA files."))
 
-    parser.add_argument(
-        "--blast-dir",
-        required=True,
-        help="Directory containing blast result subfolders")
+    parser.add_argument("--blast-dir", default="Blast/Results", help="Directory containing blast result subfolders")
 
-    parser.add_argument(
-        "--reference-dir",
-        required=True,
-        help="Directory containing reference gene FASTA files")
+    parser.add_argument("--reference-dir", default="Blast/ReferenceGeneSequences", help="Directory containing reference gene FASTA files")
 
-    parser.add_argument(
-        "--genome-dir",
-        required=True,
-        help="Directory containing test plastid genome FASTA files")
+    parser.add_argument("--genome-dir", default="Blast/PlastidSequences", help="Directory containing test plastid genome FASTA files")
 
-    parser.add_argument(
-        "--output-dir",
-        required=True,
-        help="Directory for output alignment FASTA files")
+    parser.add_argument("--output-dir", required=True, help="Directory for output alignment FASTA files")
 
     parser.add_argument(
         "--flanking-region",
