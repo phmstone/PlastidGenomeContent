@@ -30,6 +30,10 @@ This script converts the annotations present in genbank files to a TSV with a co
 It takes the big genbank file output by `fetchGenbank.py` as input. The file will automatically be looked for in `Outputs/` this does not need to be written in the path.  
 The value entered represents the status of the gene in that organism (0 = present, 1 = missing, 2 = pseudogene).  
 
+## presenceAbsence.py
+This script takes the output .TSV from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as .png file.   
+The output file name can be given on the command line or the file will automatically called `heatmapPlot.png`.   
+
 ## presentGeneMultiFasta.py
 This script makes multi fastas by gene for all chloroplast genes (could be manually changed for desired genes of interest) where the gene is annotated as being present in the genbank file.  
 It creates a directory called `PresentGeneMultiFastas` where these multifasta files are kept, but the name of this directory can be chosen using `--outdir` on the command line.  
