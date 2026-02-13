@@ -7,17 +7,23 @@
 # 5. Appends extracted sequences to alignment files
 ####################################################################################################
 
+# ----------------------------------------------------------
+# Import packages
+# ----------------------------------------------------------
+
 import os
 import re
 import argparse
 import numpy as np
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
-from collections import defaultdict  # NEW import for genome isolation
+from collections import defaultdict 
 
 # ---------------------------------------------------------------------------------------------------
 # Command line arguments
 # ---------------------------------------------------------------------------------------------------
+
+# should make it less interactive so it just looks in blast directory for pre-defined directory names
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -38,7 +44,7 @@ def parse_args():
     parser.add_argument(
         "--genome-dir",
         required=True,
-        help="Directory containing plastid genome FASTA files")
+        help="Directory containing test plastid genome FASTA files")
 
     parser.add_argument(
         "--output-dir",
@@ -63,23 +69,17 @@ def parse_args():
 args = parse_args()
 
 # ---------------------------------------------------------------------------------------------------
-# Gene list
+# Get gene list from reference FASTA filenames
 # ---------------------------------------------------------------------------------------------------
 
-# Separate the genes into a list and make everything lowercase for easier matching
-geneList = "ndhA	ndhB	ndhC	ndhD	ndhE	ndhF	ndhG	ndhH	ndhI	ndhJ	ndhK	ccsA	cemA	petA	petB	petD	petG	petL	petN	psaA	psaB	psaC	psaI	psaJ	psbA	psbB	psbC	psbD	psbE	psbF	psbH	psbI	psbJ	psbK	psbL	psbM	psbN	psbT	psbZ	rbcL	ycf3	ycf4	rpoA	rpoB	rpoC1	rpoC2	atpA	atpB	atpE	atpF	atpH	atpI	infA	rpl2	rpl14	rpl16	rpl20	rpl22	rpl23	rpl32	rpl33	rpl36	rps2	rps3	rps4	rps7	rps8	rps11	rps12	rps14	rps15	rps16	rps18	rps19	accD	clpP	matK	ycf1	ycf2	rrn4.5	rrn5	rrn16	rrn23	trnA-UGC	trnC-GCA	trnD-GUC	trnE-UUC	trnF-GAA	trnfM-CAU	trnG-GCC	trnG-UCC	trnH-GUG	trnI-CAU	trnI-GAU	trnK-UUU	trnL-CAA	trnL-UAA	trnL-UAG	trnM-CAU	trnN-GUU	trnP-UGG	trnQ-UUG	trnR-ACG	trnR-UCU	trnS-GCU	trnS-GGA	trnS-UGA	trnT-GGU	trnT-UGU	trnV-GAC	trnV-UAC	trnW-CCA	trnY-GUA"
-geneList = geneList.lower().split('\t')
-
-
-# ---------------------------------------------------------------------------------------------------
-# Build a mapping of genome accessions to FASTA file paths
-# ---------------------------------------------------------------------------------------------------
-
-genome_files = {}
-for f in os.listdir(args.genome_dir):
+# Each reference gene FASTA file is named <gene>.fasta
+# This automatically generates the list of reference genes to process
+geneList = []
+for f in os.listdir(args.reference_dir):
     if f.endswith(".fasta"):
-        name_no_ext = os.path.splitext(f)[0]        # remove .fasta extension
-        genome_files[name_no_ext] = os.path.join(args.genome_dir, f)
+        gene_name = os.path.splitext(f)[0]  # Strip ".fasta"
+        geneList.append(gene_name.lower())  # Lowercase for consistent matching
+
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -98,6 +98,16 @@ for gene in geneList:
             for record in SeqIO.parse(reference_fasta, "fasta"):
                 SeqIO.write(record, alignment_file, "fasta")
 
+
+# ---------------------------------------------------------------------------------------------------
+# Map genome accessions to FASTA file paths
+# ---------------------------------------------------------------------------------------------------
+
+genome_files = {}
+for f in os.listdir(args.genome_dir):
+    if f.endswith(".fasta"):
+        name_no_ext = os.path.splitext(f)[0]  # remove ".fasta"
+        genome_files[name_no_ext] = os.path.join(args.genome_dir, f)
 
 # ---------------------------------------------------------------------------------------------------
 # Process blast results
