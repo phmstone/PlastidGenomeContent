@@ -60,8 +60,8 @@ The multifasta files for each gene contain sequences from the reference plastid 
 The sequences in the multifasta file from the test plastid genomes are labelled with the sequence coordinates and the reference sequence that was used to find that specific hit.  
 Test plastid - gene combinations that had no hits found with blast are output to `NoHitsFiles.txt`.  
 Exceptionally long blast hits are are not written out to the multifasta files, but the .txt blast result file is flagged and written to `filesToCheckAgain.txt`.  
-Mandatory inputs are directories containing blast results, reference gene sequences, and test plastid fasta files.   
-All of the above directories are generated inside `Blast` by `blastPresenceAbsence.py` automatically.  
+Inputs are directories containing blast results, reference gene sequences, and test plastid fasta files.   
+All of the above directories are generated inside `Blast` by `blastPresenceAbsence.py` automatically and these directories are set as defaults in the script.  
 An output directory name can be specified, or the multifasta files and .txt flagging files will be put in a directory called `unalignedMultifastas`.  
 The threshold for how long a blast hit has to be to be flagged can be adjusted with `--ir-cutoff` but the default is 5000.  
 The number of base pairs flanking the blast hit to be included in the final multifasta file can be specified hit with `--flanking-region`, but the default is set to 0.  
