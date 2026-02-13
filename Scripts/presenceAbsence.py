@@ -136,7 +136,7 @@ rrna_word_list = ['23S rRNA', '4.5S rRNA', '5S rRNA', '16S rRNA']
 rrn_alternate_list = ['rrn16', 'rrn4.5s', 'rrn5s', 'rrn23s']
 
 # make everything lowercase for case insensitive matching
-gene_list = [g.lower() for g in gene_list]
+geneList = [g.lower() for g in geneList]
 rrna_list = [g.lower() for g in rrna_list]
 trna_list = [g.lower() for g in trna_list]
 trna_sesamum_list = [g.lower() for g in trna_sesamum_list]
@@ -175,7 +175,7 @@ for i in range(len(sequence_dict)):
     profile = []
 
     #  go through the protein coding genes
-    for gene in gene_list:
+    for gene in geneList:
         if gene in all_pseudogenes[i]:
             profile.append("2")
         elif gene in all_present_genes[i]:
@@ -240,7 +240,7 @@ if nexus_file:
 # Make a tabular output
 # ----------------------------------------------------------
 with open(tsv_file, "w") as f:
-    f.write("speciesName\tgenbankID\t" + "\t".join(gene_list + rrna_list + trna_list) + "\n")
+    f.write("speciesName\tgenbankID\t" + "\t".join(geneList + rrna_list + trna_list) + "\n")
     for i in range(len(taxa_names)):
         f.write(f"{taxa_names[i]}\t{genbank_ids[i]}\t" + "\t".join(gene_profiles[i]) + "\n")
 
