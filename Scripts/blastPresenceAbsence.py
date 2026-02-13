@@ -166,7 +166,15 @@ for gbk in reference_gbk_files:
 
         # get gene name from actual gene feature or if not from the product
         gene_name = feature.qualifiers.get("gene", feature.qualifiers.get("product", [""]))[0].lower()
-        gene_name_norm = re.sub(r'[\s_\-()]', '', gene_name).replace("rna", "")
+        # more complicated for rrna
+        rrna_match = re.search(r'(\d+(?:\.\d+)?)s\s+ribosomal', gene_name)
+        if rrna_match:
+        	number = rrna_match.group(1)
+        	gene_name_norm = f"rrn{number}"
+        else:
+        	gene_name_norm = re.sub(r'[\s_\-()]', '', gene_name)
+        	gene_name_norm = gene_name_norm.replace("rna", "")
+        	gene_name_norm = re.sub(r'rrn(\d+(?:\.\d+)?)s$', r'rrn\1', gene_name_norm)
 
         gene_id = None
 
