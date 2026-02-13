@@ -30,7 +30,7 @@ This script converts the annotations present in genbank files to a TSV with a co
 It takes the big genbank file output by `fetchGenbank.py` as input. The file will automatically be looked for in `Outputs/` this does not need to be written in the path.  
 The value entered represents the status of the gene in that organism (0 = present, 1 = missing, 2 = pseudogene).  
 
-## presenceAbsence.py
+## heatMapPlot.py
 This script takes the output .TSV from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as .png file.   
 The output file name can be given on the command line or the file will automatically called `heatmapPlot.png`.   
 
