@@ -169,9 +169,15 @@ for seq_record in sequence_dict.values():
                 continue
 			# normalise the spelling names in the same way as above to find a match
             norm_name = combined_name.lower()
-            norm_name = re.sub(r'[\s_\-()]', '', norm_name)
-            norm_name = norm_name.replace("rna", "")
-
+            # special case for some rrna spellings where whole word is used 
+            rrna_match = re.search(r'(\d+(?:\.\d+)?)s\s+ribosomal', norm_name)
+            if rrna_match:
+            	number = rrna_match.group(1)
+            	norm_name = f"rrn{number}"
+			# standard normalisation for everything else
+            else:
+            	norm_name = re.sub(r'rrn(\d+(?:\.\d+)?)s$', r'rrn\1', norm_name)
+            	norm_name = norm_name.replace("rna", "")
             if norm_name in normalized_targets:
                 canonical = normalized_targets[norm_name]
 				# if there's pseudo in the gene information, classify it as a pseudogene
