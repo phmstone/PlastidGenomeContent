@@ -27,12 +27,14 @@ The `Outputs` directory is created automatically by the script and does not need
 
 ## presenceAbsence.py
 This script converts the annotations present in genbank files to a TSV with a column for each gene and a row for each taxon.  
-It takes the big genbank file output by `fetchGenbank.py` as input. The file will automatically be looked for in `Outputs/` this does not need to be written in the path.  
+It takes the big genbank file output by `fetchGenbank.py` as input. The file must be specified on the command line.  
 The value entered represents the status of the gene in that organism (0 = present, 1 = missing, 2 = pseudogene).  
+A default gene list is provided in the script, but an input of chosen plastid genes can be used. The genes should be written in a .txt file with one gene per line.   
 
 ## heatMapPlot.py
 This script takes the output .TSV from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as .png file.   
-The output file name can be given on the command line or the file will automatically called `heatmapPlot.png`.   
+The output file name can be given on the command line or the file will automatically called `heatmapPlot.png`.
+This plot relies solely on GenBank annotations.      
 
 ## presentGeneMultiFasta.py
 This script makes multi fastas by gene for all chloroplast genes (could be manually changed for desired genes of interest) where the gene is annotated as being present in the genbank file.  

@@ -2,26 +2,35 @@
 # This script:
 # 1. Reads in a multi-sequence .gbk file
 # 2. Parses annotations in the .gbk file by taxon
-# 3. Creates a TSV stating whether a gene is present, missing, or pseudogenized according to the .gbk annotations
-# 4. Also makes a text block that can be input into a nexus file for character state change mapping
+# 3. Creates a TSV stating whether a gene is present, missing, or pseudogenized
+# 4. Optionally makes a nexus-style text block for character state mapping
 ####################################################################################################
 
+# ----------------------------------------------------------
+# Import packages
+# ----------------------------------------------------------
 
 import argparse
+import re
 from Bio import SeqIO
+
 
 # ----------------------------------------------------------
 # Command line arguments
 # ----------------------------------------------------------
+
 # This allows the script to be run from the command line
-parser = argparse.ArgumentParser(description="Generate gene presence/absence profiles from GenBank files.")
+parser = argparse.ArgumentParser(
+    description="Generate gene presence/absence profiles from GenBank files."
+)
 
 # Required arguments
 parser.add_argument("--input", required=True, help="Input GenBank (.gbk) file")
 parser.add_argument("--tsv", required=True, help="Output TSV file for gene profiles")
 
-# Optional argument
-parser.add_argument("-n", "--nexus", help="Optional nexus-style output text file")
+# Optional arguments
+parser.add_argument("--gene_file", help="Optional file containing one gene per line (overrides default list)")
+parser.add_argument("-n", "--nexus", help="Optional nexus-style block output in text file")
 
 # Parse the arguments
 args = parser.parse_args()
@@ -29,6 +38,7 @@ args = parser.parse_args()
 # Access arguments
 input_file = args.input
 tsv_file = args.tsv
+gene_file = args.gene_file
 nexus_file = args.nexus
 
 
@@ -47,8 +57,9 @@ except Exception as e:
 
 print(f"Number of sequences read: {len(sequence_dict)}")
 
+
 # ----------------------------------------------------------
-# Remove sequences that do not have any gene features
+# Remove sequences without gene annotations
 # ----------------------------------------------------------
 
 # if a .gbk file has no genes present as features then there is a problem
@@ -58,10 +69,10 @@ no_gene_list = []
 
 # figure out if a gene is present
 for key, seq_record in sequence_dict.items():
-    has_gene = any('gene' in f.qualifiers for f in seq_record.features)
+    has_gene = any("gene" in f.qualifiers for f in seq_record.features)
     if not has_gene:
         no_gene_list.append(key)
-        
+
 # remove sequences records from the dictionary if there is no gene        
 for key in no_gene_list:
     sequence_dict.pop(key)
@@ -70,8 +81,62 @@ for key in no_gene_list:
 print(f"Removed {len(no_gene_list)} sequences with no gene annotations.")
 # print the genbank IDs that have no gene annotations if there are any
 if len(no_gene_list) > 0:
-	print (f"These sequences have no gene annotations: {no_gene_list} ")
+    print(f"These sequences have no gene annotations: {no_gene_list}")
 print(f"Remaining sequences: {len(sequence_dict)}")
+
+
+# ----------------------------------------------------------
+# Define reference gene list (default or optional override)
+# ----------------------------------------------------------
+
+# Add in the default genes tested (canonical angiosperm plastid genes)
+default_gene_string = (
+    "ndhA\tndhB\tndhC\tndhD\tndhE\tndhF\tndhG\tndhH\tndhI\tndhJ\tndhK\t"
+    "ccsA\tcemA\tpetA\tpetB\tpetD\tpetG\tpetL\tpetN\t"
+    "psaA\tpsaB\tpsaC\tpsaI\tpsaJ\t"
+    "psbA\tpsbB\tpsbC\tpsbD\tpsbE\tpsbF\tpsbH\tpsbI\tpsbJ\tpsbK\tpsbL\tpsbM\tpsbN\tpsbT\tpsbZ\t"
+    "rbcL\tycf3\tycf4\t"
+    "rpoA\trpoB\trpoC1\trpoC2\t"
+    "atpA\tatpB\tatpE\tatpF\tatpH\tatpI\t"
+    "infA\t"
+    "rpl2\trpl14\trpl16\trpl20\trpl22\trpl23\trpl32\trpl33\trpl36\t"
+    "rps2\trps3\trps4\trps7\trps8\trps11\trps12\trps14\trps15\trps16\trps18\trps19\t"
+    "accD\tclpP\tmatK\tycf1\tycf2\t"
+    "rrn4.5\trrn5\trrn16\trrn23\t"
+    "trnA-UGC\ttrnC-GCA\ttrnD-GUC\ttrnE-UUC\ttrnF-GAA\ttrnfM-CAU\t"
+    "trnG-GCC\ttrnG-UCC\ttrnH-GUG\ttrnI-CAU\ttrnI-GAU\ttrnK-UUU\t"
+    "trnL-CAA\ttrnL-UAA\ttrnL-UAG\ttrnM-CAU\ttrnN-GUU\ttrnP-UGG\t"
+    "trnQ-UUG\ttrnR-ACG\ttrnR-UCU\ttrnS-GCU\ttrnS-GGA\ttrnS-UGA\t"
+    "trnT-GGU\ttrnT-UGU\ttrnV-GAC\ttrnV-UAC\ttrnW-CCA\ttrnY-GUA")
+
+# Default gene list
+gene_list = default_gene_string.split("\t")
+
+# Optional override if user is inputting their own gene list
+if gene_file:
+    with open(gene_file) as gf:
+        gene_list = [line.strip() for line in gf if line.strip()]
+    print(f"Using custom gene list from {gene_file}")
+else:
+    print("Using default hard-coded chloroplast gene list")
+
+canonical_genes = gene_list
+print(f"Tracking {len(canonical_genes)} genes.")
+
+
+# ----------------------------------------------------------
+# Build normalized lookup dictionary
+# ----------------------------------------------------------
+
+normalized_targets = {}
+
+# Strip punctuation and white space from gene names in order to normalise them
+for g in canonical_genes:
+    norm = g.lower()
+    norm = re.sub(r'[\s_\-()]', '', norm)
+    norm = norm.replace("rna", "")
+    normalized_targets[norm] = g
+    
 
 # ----------------------------------------------------------
 # Extract taxon names, GenBank IDs, genes, and pseudogenes
@@ -85,143 +150,66 @@ all_pseudogenes = []
 
 # loop over taxa in the dictionary 
 for seq_record in sequence_dict.values():
+	# extract taxon name from genabnk record
     taxon_name = "_".join(seq_record.description.split()[:2])
     taxa_names.append(taxon_name)
     genbank_ids.append(seq_record.name)
-	
-    present_genes = []
-    pseudogenes = []
-	
-	# classify the features in the sequence record as genes or pseudogenes
+	# establish empty lists to be filled in
+    present_genes = set()
+    pseudogenes = set()
+	# loop through the features in the sequence and record as genes or pseudogenes
     for f in seq_record.features:
-        if 'gene' in f.qualifiers:
-            gene_name = ''.join(f.qualifiers['gene']).lower()
-            if 'pseudo' in f.qualifiers:
-                pseudogenes.append(gene_name)
-            else:
-                present_genes.append(gene_name)
-	
-	# remove duplicates (things in the IR will get listed twice)
-    present_genes = list(set(present_genes))
-    # remove pseudogenes that also exist as functional genes
-    pseudogenes = list(set([g for g in pseudogenes if g not in present_genes]))
-	
+    	# only consider sequences that could be relevant
+        if f.type in ["CDS", "tRNA", "rRNA", "gene"]:
+            gene_qual = f.qualifiers.get("gene", [""])[0]
+            product_qual = f.qualifiers.get("product", [""])[0]
+            combined_name = gene_qual if gene_qual else product_qual
+			# if no name match then move on
+            if not combined_name:
+                continue
+			# normalise the spelling names in the same way as above to find a match
+            norm_name = combined_name.lower()
+            norm_name = re.sub(r'[\s_\-()]', '', norm_name)
+            norm_name = norm_name.replace("rna", "")
+
+            if norm_name in normalized_targets:
+                canonical = normalized_targets[norm_name]
+				# if there's pseudo in the gene information, classify it as a pseudogene
+                if "pseudo" in f.qualifiers:
+                    pseudogenes.add(canonical)
+                else:
+                    present_genes.add(canonical)
+	# if a gene is included in pseudogenes and present genes, remove it from pseudogenes
+	# potentially could be an issue if partial copies are present and the end of one IR
+    pseudogenes = pseudogenes - present_genes
     all_present_genes.append(present_genes)
     all_pseudogenes.append(pseudogenes)
 
-# summary data
 print(f"Extracted gene data for {len(taxa_names)} taxa.")
-
-
-# ----------------------------------------------------------
-# Define reference gene lists
-# ----------------------------------------------------------
-
-# genes come in lots of different spelling variations so need to catch them all 
-# input the list of genes as a string and break it up into a list by the tabs in between 
-geneString = "ndhA	ndhB	ndhC	ndhD	ndhE	ndhF	ndhG	ndhH	ndhI	ndhJ	ndhK	ccsA	cemA	petA	petB	petD	petG	petL	petN	psaA	psaB	psaC	psaI	psaJ	psbA	psbB	psbC	psbD	psbE	psbF	psbH	psbI	psbJ	psbK	psbL	psbM	psbN	psbT	psbZ	rbcL	ycf3	ycf4	rpoA	rpoB	rpoC1	rpoC2	atpA	atpB	atpE	atpF	atpH	atpI	infA	rpl2	rpl14	rpl16	rpl20	rpl22	rpl23	rpl32	rpl33	rpl36	rps2	rps3	rps4	rps7	rps8	rps11	rps12	rps14	rps15	rps16	rps18	rps19	accD	clpP	matK	ycf1	ycf2	rrn4.5	rrn5	rrn16	rrn23	trnA-UGC	trnC-GCA	trnD-GUC	trnE-UUC	trnF-GAA	trnfM-CAU	trnG-GCC	trnG-UCC	trnH-GUG	trnI-CAU	trnI-GAU	trnK-UUU	trnL-CAA	trnL-UAA	trnL-UAG	trnM-CAU	trnN-GUU	trnP-UGG	trnQ-UUG	trnR-ACG	trnR-UCU	trnS-GCU	trnS-GGA	trnS-UGA	trnT-GGU	trnT-UGU	trnV-GAC	trnV-UAC	trnW-CCA	trnY-GUA"
-gene_list = geneString.split('\t')
-# extract the tRNA list
-trna_list = gene_list[83:]
-# extract the rrna list
-rrna_list = gene_list[79:83]
-# extract the protein coding gene list
-geneList = gene_list[:79]
-
-# have only seen this style in one genbank file (Sesamum) but it's strange and must be spelled out in full
-trna_sesamum_list = ['tRNA-Ala (UGC)', 'tRNA-Cys (GCA)', 'tRNA-Asp (GUC)', 'tRNA-Glu (UUC)', 'tRNA-Phe (GAA)', 'tRNA-fM (CAU)', 'tRNA-Gly (GCC)', 'tRNA-Gly (UCC)', 'tRNA-His (GUG)', 'tRNA-Ile (CAU)', 'tRNA-Ile (GAU)', 'tRNA-Lys (UUU)', 'tRNA-Leu (CAA)', 'tRNA-Leu (UAA)', 'tRNA-Leu (UAG)', 'tRNA-Met (CAU)', 'tRNA-Asn (GUU)', 'tRNA-Pro (UGG)', 'tRNA-Gln (UUG)', 'tRNA-Arg (ACG)', 'tRNA-Arg (UCU)', 'tRNA-Ser (GCU)', 'tRNA-Ser (GGA)', 'tRNA-Ser (UGA)', 'tRNA-Thr (GGU)', 'tRNA-Thr (UGU)', 'tRNA-Val (GAC)', 'tRNA-Val (UAC)', 'tRNA-Trp (CCA)', 'tRNA-Tyr (GUA)']
-
-# write out alternative rrna gene name formats
-rrna_word_list = ['23S rRNA', '4.5S rRNA', '5S rRNA', '16S rRNA']
-rrn_alternate_list = ['rrn16', 'rrn4.5s', 'rrn5s', 'rrn23s']
-
-# make everything lowercase for case insensitive matching
-geneList = [g.lower() for g in geneList]
-rrna_list = [g.lower() for g in rrna_list]
-trna_list = [g.lower() for g in trna_list]
-trna_sesamum_list = [g.lower() for g in trna_sesamum_list]
-
-
-# ----------------------------------------------------------
-# Generate alternative tRNA spellings
-# ----------------------------------------------------------
-
-# make empty lists for alternate spellings of tRNA genes
-trna_hyphen = []
-trna_underscore = []
-trna_bracket = []
-trna_no_punct = []
-
-# make the alternate trna spellings
-for gene in trna_list:
-    trna_hyphen.append(gene)
-    trna_underscore.append(gene.replace('-', '_'))
-    trna_bracket.append(gene.replace('-', '(') + ")")
-    trna_no_punct.append(gene.replace('-', '').replace('(', '').replace(')', ''))
 
 
 # ----------------------------------------------------------
 # Generate gene presence/absence profiles
 # ----------------------------------------------------------
 
-# a 0 represents that a gene is present
-# a 1 represents that a gene is absent 
-# a 2 represents that a gene is a pseudogene
-
-#empty list for gene presence absence profiles
 gene_profiles = []
 
-for i in range(len(sequence_dict)):
+for i in range(len(taxa_names)):
     profile = []
-
-    #  go through the protein coding genes
-    for gene in geneList:
+    for gene in canonical_genes:
         if gene in all_pseudogenes[i]:
             profile.append("2")
         elif gene in all_present_genes[i]:
             profile.append("0")
         else:
             profile.append("1")
-            
-    # go through the rRNAs
-    for j in range(len(rrna_list)):
-        found = False
-        for variant_list in [rrn_alternate_list, rrna_word_list, rrna_list]:
-            if variant_list[j] in all_pseudogenes[i]:
-                profile.append("2")
-                found = True
-                break
-        if not found:
-       		for variant_list in [rrn_alternate_list, rrna_word_list, rrna_list]:
-       			if variant_list[j] in all_present_genes[i]:
-       				profile.append("0")
-       				found = True
-       				break
-       	if not found:
-       		profile.append("1")         
-
-    # go through the tRNAs
-    for j in range(len(trna_list)):
-        found = False
-        for variant_list in [trna_hyphen, trna_underscore, trna_bracket, trna_no_punct, trna_sesamum_list]:
-            if variant_list[j] in all_pseudogenes[i]:
-                profile.append("2")
-                found = True
-                break
-        if not found:
-            for variant_list in [trna_hyphen, trna_underscore, trna_bracket, trna_no_punct, trna_sesamum_list]:
-                if variant_list[j] in all_present_genes[i]:
-                    profile.append("0")
-                    found = True
-                    break
-        if not found:
-            profile.append("1")
     gene_profiles.append(profile)
 
 print("Gene presence/absence profiles generated.")
 
+
 # ----------------------------------------------------------
-# make a nexus style output
+# Optional nexus-style output
 # ----------------------------------------------------------
 
 # the nexus file style output is optional and will only be generated if specified on the command line
@@ -237,12 +225,13 @@ if nexus_file:
 
 
 # ----------------------------------------------------------
-# Make a tabular output
+# Write TSV output
 # ----------------------------------------------------------
+
 with open(tsv_file, "w") as f:
-    f.write("speciesName\tgenbankID\t" + "\t".join(geneList + rrna_list + trna_list) + "\n")
+    f.write("speciesName\tgenbankID\t" + "\t".join(canonical_genes) + "\n")
     for i in range(len(taxa_names)):
-        f.write(f"{taxa_names[i]}\t{genbank_ids[i]}\t" + "\t".join(gene_profiles[i]) + "\n")
+        f.write( f"{taxa_names[i]}\t{genbank_ids[i]}\t" + "\t".join(gene_profiles[i]) + "\n")
 
 print(f"TSV file written: {tsv_file}")
 print("Processing complete.")
