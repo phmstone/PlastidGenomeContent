@@ -72,7 +72,13 @@ Requires MAFFT to be installed into the user's PATH or able to be called on the 
 The directory containing the multifastas to be aligned needs to be specified in `--input`.  
 The aligned fasta files will be output into a new directory specified by the user with `--output`.  
 This is the least worked on so far!!!!  
-  
+
+
+## aligner.py
+This script uses the alignments created in `aligner.py` and the presence/absence .TSV file produced by `presenceAbsence.py`.    
+Determines if any changes need to be made to the presence/absence .TSV based on the blast results.   
+Creates a new presence/absence .TSV file and a change log .TSV that records changes made to the original presence/absence .TSV file and why.  
+The new output presence/absence .TSV can also be used with `heatMapPlot.py` to make a new figure.   
   
   
 ### To do list
