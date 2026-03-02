@@ -27,20 +27,18 @@ The `Outputs` directory is created automatically by the script and does not need
 
 ## presenceAbsence.py
 This script converts the annotations present in genbank files to a TSV with a column for each gene and a row for each taxon.  
-It takes the big genbank file output by `fetchGenbank.py` as input. The file must be specified on the command line.  
-The value entered represents the status of the gene in that organism (0 = present, 1 = missing, 2 = pseudogene).  
+It takes the big genbank file output by `fetchGenbank.py` as input. The .gbk file must be specified on the command line as input.  
+The value entered in the output TSV represents the status of the gene in that organism (0 = present, 1 = missing, 2 = pseudogene).   
+The name of the output .TSV must be specified on the command line.    
+A .txt file that gives presence/absence data in the correct format for inserting into a nexus file for character state mapping in e.g. Mesquite can be produced.    
 A default gene list is provided in the script, but an input of chosen plastid genes can be used. The genes should be written in a .txt file with one gene per line.   
+By default, all genes annotated as present have their full gene sequences removed and put into multifasta files by gene.   
+There is the option to produce multifastas by gene for coding sequences/intron free sequences as well.    
 
 ## heatMapPlot.py
-This script takes the output .TSV from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as .png file.   
-The output file name can be given on the command line or the file will automatically called `heatmapPlot.png`.
-This plot relies solely on GenBank annotations.      
-
-## presentGeneMultiFasta.py
-This script makes multi fastas by gene for all chloroplast genes (could be manually changed for desired genes of interest) where the gene is annotated as being present in the genbank file.  
-It creates a directory called `PresentGeneMultiFastas` where these multifasta files are kept, but the name of this directory can be chosen using `--outdir` on the command line.  
-This is not essential to the "gene discovery" aspect of the pipeline.  
-If using the annotations on genbank alone is good enough for your project then these multifasta files will be sufficient and no further scripts need to be run.  
+This script takes the output .TSV from `presenceAbsence.py` as input and makes a "heatmap" plot showing gene status for each taxon as a .png file.   
+The output file name can be given on the command line or the file will automatically called `heatmapPlot.png`.    
+This plot relies solely the annotations from the .TSV file, which can be manually edited.    
 
 ## blastPresenceAbsence.py
 This script uses the .TSV generated from `presenceAbsence.py` and a list of genbank IDs to use as plastid gene reference sequences input by the user. 
