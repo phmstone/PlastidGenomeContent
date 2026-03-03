@@ -32,6 +32,7 @@ parser = argparse.ArgumentParser(description="Recover missing plastid genes usin
 parser.add_argument("--input", required=True, help="Presence/absence TSV file")
 parser.add_argument("--email", required=True, help="Email address for NCBI")
 parser.add_argument("--reference-ids", required=False, default=None, help="Text file of reference GenBank accessions")
+parser.add_argument("--blast-type", choices=["blastn", "tblastx"], default="blastn", help="BLAST program to use")
 parser.add_argument("--reference-outdir", default="Blast/ReferenceGeneSequences", help="Directory to store reference gene FASTAs")
 parser.add_argument("--reference-gbk-dir", default="Blast/ReferenceGenomes", help="Directory to store reference GenBank files")
 parser.add_argument("--plastid-fasta-dir", default="Blast/PlastidSequences", help="Directory to store plastid FASTA files")
@@ -296,7 +297,7 @@ for gene_idx, taxa in enumerate(missing_by_gene):
         genome_outdir = os.path.join(args.blast_out, accession)
         os.makedirs(genome_outdir, exist_ok=True)
         out_file = os.path.join(genome_outdir, f"{gene}.txt")
-        blast_cmd = ["blastn",
+        blast_cmd = [args.blast_type,
             "-db", os.path.join(args.blast_db_dir, accession),
             "-query", query_fasta,
             "-outfmt", "6 qseqid sseqid evalue qstart qend sstart send",
