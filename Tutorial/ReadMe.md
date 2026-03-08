@@ -10,16 +10,16 @@ mycoheterotrophic and autotrophic Ericaceae, and reconstruct a phylogeny.
 
 You can obtain the pipeline in one of the following ways.
 
-**Clone the repository** (recommended)    
+Clone the repository (recommended)    
 `git clone https://github.com/phmstone/PlastidGenomeContent.git
 cd REPOSITORY`
 
-**Download as a ZIP**    
+Download as a ZIP     
 Click the Code button on the GitHub repository page.
 Select Download ZIP.
 Extract the archive and navigate to the directory.
 
-**Command line download**    
+Command line download       
 `wget https://github.com/phmstone/PlastidGenomeContent/archive/refs/heads/main.zip
 unzip main.zip`
 
