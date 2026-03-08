@@ -37,6 +37,7 @@ Python packages can be installed with [pip](https://pypi.org/project/pip/), as s
 * BLAST
 * MAFFT
 * Exonerate    
+
 All can be installed with [Conda](https://anaconda.org/), [Homebrew](https://brew.sh/), or manually and then added to your $PATH. 
 If you are planning to run this on an HPC then check if these tools are available as modules, as installation may be unnecessary.
 If installing Exonerate with Homebrew, use the bioinformatics specific channel before installing.
@@ -44,7 +45,8 @@ If installing Exonerate with Homebrew, use the bioinformatics specific channel b
 ## Inputs needed
 * List of "test" genbank IDs in .txt file, one ID per line
 * List of reference genbank IDs that contain all plastid genes in .txt file, one ID per line
-The rest of the files needed will be generated.
+
+The rest of the files needed will be generated innately.
 
 
 
