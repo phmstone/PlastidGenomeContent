@@ -1,18 +1,22 @@
 # FAQs
 
-### What genes should I include for studying chloroplast genome degradation?
+### What genes should I include for studying genome degradation?
 The default gene list built into the the pipeline contains 113 plastid genes, the "canonical" full set for angiosperms. 
-It's best to include more genes when studying chloroplast genome degradation as this will improve the resolution at which you can see genome degradation.
+It's best to include more genes when studying genome degradation as this will improve the resolution at which you can see pseudogenisation and gene loss.
 Gene lists for "canonical" full sets of genes for monilophytes, bryophytes, and green algae plastid genomes and the angiosperm mitochondrial genome are provided.
 
 ### Do I have to use chloroplast genome data?
 No, this pipeline should work with any type of genetic data. 
 Other organellar data sets, such as mitochondrial genomes, will work well.
-If using nuclear data sets, it's recommended to run on and HPC for storage limitations.
+If using nuclear data sets, it's recommended to run on and HPC for storage limitations. 
+If your reads are not yet assembled, try using[PhyloHerb](https://github.com/lmcai/PhyloHerb) instead.
 
 ### Will all the different spellings of my input gene list be recognised?
 The normalisation written into the scripts handles case differences and the presence or lack of many punctuation marks.
 If in doubt about alternative spellings of gene names, add them to an alias file.
+
+### How many alternative spellings/names can be added to the alias file?
+As many as you like.
 
 ### What if my "reference" sequence doesn't include all the genes I want to study?
 Choose a different sequence that does contain the full complement of genes, or remove genes missing from the reference from the gene list.
@@ -28,6 +32,6 @@ It is unlikely that a gene will be called as present if using the output from al
 The similarity and coverage thresholds can be lowered by the user but proper checking of all the alignments is necessary to make sure that all sequences are in frame. 
 The output TSV can also be edited manually.
 
-### Can I change the text size, colours, and legend position for the heatmap figures?
-Formatting changes to the heatmap figures can be made by editing the `heatMapPlot.py` script directly. 
+### Can I change the text size, colours, and legend position for the heat map figures?
+Formatting changes to the heat map figures can be made by editing the `heatMapPlot.py` script directly. 
 The code chunk for colours starts and line 59, the legend position position is determined by line 112, and the code chunk for labelling starts at line 119.
