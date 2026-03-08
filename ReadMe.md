@@ -31,7 +31,7 @@ Some useful tutorials for biologists getting started using the command line can 
 * matplotlib
 * pandas
 
-Python packages can be installed with [pip](https://pypi.org/project/pip/), as shown in the [tutorial](https://github.com/phmstone/PlastidGenomeContent/tree/main/Tutoria).
+Python packages can be installed with [pip](https://pypi.org/project/pip/), as shown in the [tutorial](https://github.com/phmstone/PlastidGenomeContent/tree/main/Tutorial).
 
 ## Software necessary for full pipeline
 * BLAST
