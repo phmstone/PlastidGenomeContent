@@ -129,7 +129,7 @@ The following argument is optional:
 Sometimes not all the genes present in a genome are successfully annotated, this is especially true for pseudogenes. With BLAST we can uncover genes that may have been missed by the original annotation method.     
 The script `blastPresenceAbsence.py` does this.
 To save time and computing power, this script only uses BLAST to pull out genes that are annotated as pseudogenes or are missing. Genes annotated as present are assumed to be annotated correctly.    
-This script downloads the plastid genomes of all sequences with at least one gene annotated as missing/pseudogenised, and makes databases from the fasta files.    
+This script downloads the plastid genomes of all sequences with at least one gene annotated as missing/pseudogenised as fasta files, and makes databases from these fasta files.    
 
 #### Inputs
 Reference sequences should be supplied to act as query sequences for the BLAST searches. The reference sequences should have functional copies of all the genes you are testing. Ideally they are closely related taxonomically.    
@@ -138,9 +138,9 @@ The reference sequences should be identified by their GenBank IDs and the refere
 If some of the sequences supplied in the original GenBank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST.
 
 #### Outputs
-Fasta files from the GenBank sequences in the original .txt file list, BLAST directories, BLAST results, and .gbk files for the "reference" sequences are all produced and organised in directories.     
+Fasta files from the GenBank sequences in the original .txt file list, BLAST directories, BLAST results, and .gbk files for the "reference" sequences are all produced and organised automatically in directories.     
 Fasta files, BLAST database files, and .gbk files are all named after the relevant GenBank ID. BLAST results are stored in directories named after the GenBank ID that was used to make the BLAST database, and individual results files are named by gene name.    
-By default, a new directory called `Blast` is created for all the output files and directories to go into, but this can be changed.
+By default, a new directory called `Blast` is created for all the output files and directories to go into, but the directory name can be changed.
 
 The following arguments are required:
 * `--input` The presence/absence .TSV file downloaded in the previous step
@@ -149,11 +149,7 @@ The following arguments are required:
 The following arguments are optional:
 * `--reference-ids` A text file containing GenBank IDs known to have all genes of interest separated by a new line. Optional because if one of the IDs in the input .TSV contains all genes of interest, that GenBank ID can be used as a "reference".
 * `--blast-type` Choose between tblastx or blastn (defualt is blastn).
-* `--reference-outdir` A directory to store reference gene FASTAs (default name is `Blast/ReferenceGeneSequences`).    
-* `--reference-gbk-dir` A directory to store reference GenBank files (default name is `Blast/ReferenceGenomes`).
-* `--plastid-fasta-dir` A directory to store FASTA files of the GenBank IDs being made into BLAST databases (default name is `Blast/PlastidSequences`).
-* `--blast-db-dir` A directory to store BLAST databases (default name is `Blast/Databases`).
-* `--blast-out` A directory to BLAST results (default name is `Blast/Results`).
+* `--outdir` A directory that all ouputs are put into (default name is `Blast/ReferenceGeneSequences`).    
 
 **Example command:** `python3 blastPresenceAbsence.py --input EricalesPresenceAbsence.tsv --email your.NCBI.account@email.address --reference-ids referenceIDs.txt --blast-type blastn`   
 

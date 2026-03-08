@@ -33,12 +33,20 @@ parser.add_argument("--input", required=True, help="Presence/absence TSV file")
 parser.add_argument("--email", required=True, help="Email address for NCBI")
 parser.add_argument("--reference-ids", required=False, default=None, help="Text file of reference GenBank accessions")
 parser.add_argument("--blast-type", choices=["blastn", "tblastx"], default="blastn", help="BLAST program to use")
-parser.add_argument("--reference-outdir", default="Blast/ReferenceGeneSequences", help="Directory to store reference gene FASTAs")
-parser.add_argument("--reference-gbk-dir", default="Blast/ReferenceGenomes", help="Directory to store reference GenBank files")
-parser.add_argument("--plastid-fasta-dir", default="Blast/PlastidSequences", help="Directory to store plastid FASTA files")
-parser.add_argument("--blast-db-dir", default="Blast/Databases", help="Directory where BLAST databases will be made")
-parser.add_argument("--blast-out", default="Blast/Results", help="Directory for BLAST output files")
+parser.add_argument("--outdir", default="Blast", help="Base output directory (subdirectories will be created and named automatically)")
 args = parser.parse_args()
+
+# ----------------------------------------------------------
+# Define fixed output directory structure
+# ----------------------------------------------------------
+
+# Subdirectories are named automatically but user can name the base output directory
+base_outdir = args.outdir
+args.reference_outdir = os.path.join(base_outdir, "ReferenceGeneSequences")
+args.reference_gbk_dir = os.path.join(base_outdir, "ReferenceGenomes")
+args.plastid_fasta_dir = os.path.join(base_outdir, "PlastidSequences")
+args.blast_db_dir = os.path.join(base_outdir, "Databases")
+args.blast_out = os.path.join(base_outdir, "Results")
 
 # ----------------------------------------------------------
 # NCBI set up
