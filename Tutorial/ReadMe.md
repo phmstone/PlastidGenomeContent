@@ -99,7 +99,7 @@ The directory containing these is named `PresentCodingSeqMultiFastas` by default
 
 The following arguments are required:
 * `--input` The .gbk file downloaded in the previous step
-* `--TSV` The name of the output presence/absence matrix .TSV file.
+* `--tsv` The name of the output presence/absence matrix .TSV file.
 
 The following arguments are optional:
 * `--gene_file` A text file containing gene names separated by a new line.
@@ -174,12 +174,12 @@ Gene/taxon combinations where no BLAST hit was found are written out in a file c
 Do this with the script `blastProcessing.py`.
 
 The following arguments are required:
-* `--output-dir` A directory to store unaligned multifastas containing sequences found with BLAST and 
+* `--output-dir` A directory to store unaligned multifastas of hits from the Blast results.
+* `--blast-dir` Directory containing BLAST results.
+* `--reference-dir` Directory containing reference gene multifasta files.
+* `--genome-dir` Directory containing whole plastid fasta sequences. 
 
 The following arguments are optional:
-* `--blast-dir` Directory containing BLAST results, the default is `Blast/Results`.
-* `--reference-dir` Directory containing reference gene multifasta files, the default is `Blast/ReferenceGeneSequences`.
-* `---genome-dir` Directory containing whole plastid sequences, default name is `Blast/PlastidSequences`.
 * `--flanking-region` The number of base pairs taken before and after the the start and end of the blast hit. the default value is `0`.
 * `--ir-cutoff` On rare occasions the script will incorrectly process multiple blast hits together to create a very long sequence. Files with a sequence over the length set here will be flagged. The defualt value is `5000`.
 
