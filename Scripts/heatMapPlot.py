@@ -31,8 +31,8 @@ parser.add_argument(
 
 parser.add_argument(
     "-o", "--output",
-    default="heatmapPlot.png",
-    help="Output image filename (default: heatmapPlot.png)")
+    default="heatMapPlot.png",
+    help="Output image filename (default: heatMapPlot.png)")
 
 args = parser.parse_args()
 
