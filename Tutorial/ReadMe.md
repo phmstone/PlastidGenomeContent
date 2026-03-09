@@ -64,7 +64,10 @@ The following arguments are required:
 * `--input` The name of the file containing the list of GenBank IDs.
 * `--output` The name of the output GenBank file.    
 
-**Example command:** `python3 fetchGenBank.py --email your.NCBI.account@email.address --input EricalesGenBankIDs.txt --output Ericales.gbk`   
+**Example command:** 
+```
+python3 fetchGenBank.py --email your.NCBI.account@email.address --input EricalesGenBankIDs.txt --output Ericales.gbk
+```   
 
 This will create a multi-sequence GenBank file in the directory `Outputs`.    
 
@@ -105,7 +108,10 @@ The following arguments are optional:
 * `--outdir` Output directory for whole gene sequences.
 * `--coding_outdir` Output directory for exon only gene sequences.
 
-**Example command:** `python3 presenceAbsence.py --input Ericales.gb --tsv EricalesPresenceAbsence.tsv --alias_file gene_alias.txt --outdir presentGeneSequences --coding_outdir --presentGeneCodingSequences`   
+**Example command:** 
+```
+python3 presenceAbsence.py --input Ericales.gb --tsv EricalesPresenceAbsence.tsv --alias_file gene_alias.txt --outdir presentGeneSequences --coding_outdir presentGeneCodingSequences
+```   
 
 
 
@@ -121,8 +127,10 @@ The following argument is required:
 The following argument is optional:
 * `-o` The name of the .png file of the plot.
 
-**Example command:** `python3 heatMapPlot.py EricalesPresenceAbsence.tsv -o EricalesHeatMap.png`   
-
+**Example command:** 
+```
+python3 heatMapPlot.py EricalesPresenceAbsence.tsv -o EricalesHeatMap.png
+```
 
 ## V. Finding other sequences with BLAST
 
@@ -151,7 +159,10 @@ The following arguments are optional:
 * `--blast-type` Choose between tblastx or blastn (defualt is blastn).
 * `--outdir` A directory that all ouputs are put into (default name is `Blast/ReferenceGeneSequences`).    
 
-**Example command:** `python3 blastPresenceAbsence.py --input EricalesPresenceAbsence.tsv --email your.NCBI.account@email.address --reference-ids referenceIDs.txt --blast-type blastn`   
+**Example command:** 
+```
+python3 blastPresenceAbsence.py --input EricalesPresenceAbsence.tsv --email your.NCBI.account@email.address --reference-ids referenceIDs.txt --blast-type blastn`
+```   
 
 
 ## VI. Parsing BLAST results
@@ -172,7 +183,10 @@ The following arguments are optional:
 * `--flanking-region` The number of base pairs taken before and after the the start and end of the blast hit. the default value is `0`.
 * `--ir-cutoff` On rare occasions the script will incorrectly process multiple blast hits together to create a very long sequence. Files with a sequence over the length set here will be flagged. The defualt value is `5000`.
 
-**Example command:** `python3 blastProcessing.py --output-dir unalignedMultiFastas --ir-cutoff 4000`   
+**Example command:** 
+```
+python3 blastProcessing.py --output-dir unalignedMultiFastas --ir-cutoff 4000
+``` 
 
 
 
@@ -187,7 +201,10 @@ The following arguments are required:
 * `--input` The directory containing unaligned multifasta files produced in the previous step.
 * `--output` The directory where the aligned multifasta files will be stored.
 
-**Example command:** `python3 aligner.py --input unalignedMultiFastas --output alignedMultiFastas`   
+**Example command:** 
+```
+python3 aligner.py --input unalignedMultiFastas --output alignedMultiFastas
+``` 
 
 
 
@@ -209,7 +226,10 @@ The following arguments are optional:
 * `--minCov` The minimum coverage needed to a reference sequence for a gene to be called as present (default is `0.95`).
 * `--minSim` The minimum similarity needed to a reference sequence for a gene to be called as present (default is `0.95`).
 
-**Example command:** `python3 updateTSV.py --input EricalesPresenceAbsence.tsv`   
+**Example command:** 
+```
+python3 updateTSV.py --ogTSV EricalesPresenceAbsence.tsv
+```
 
 
 
@@ -224,7 +244,10 @@ The following argument is required:
 The following argument is optional:
 * `-o` The name of the .png file of the plot.
 
-**Example command:** `python3 heatMapPlot.py updatedPA.tsv -o EricalesHeatMap-updated.png`   
+**Example command:** 
+```
+python3 heatMapPlot.py updatedPA.tsv -o EricalesHeatMap-updated.png
+``` 
 
 
 
