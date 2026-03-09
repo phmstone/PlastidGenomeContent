@@ -3,29 +3,38 @@
 # a bash script to run the whole pipeline in one go on a local computer
 # assumes that the pipeline and dependencies are already installed
 
-# Assign variables
+# Configuration
+
+# path to scripts
 scriptDir="../../Scripts"
+# email for your NCBI account
 email="your.NCBI.account@email.address"
+# where all outputs from this script will be placed
+projectDir="ericalesExample"
+
+# Inputs
 inputGenBankIDs="ericaceaeGenBankIDs.txt"
-multiGenBankFile="EricaceaeExample/Ericales.gbk"
-presenceAbsenceTSV="EricaceaeExample/EricalesPresenceAbsence.tsv"
-aliasFile="gene_alias.txt"
-presentGeneSequences="EricaceaeExample/presentGeneSequences"
-presentGeneCodingSequences="EricaceaeExample/presentGeneCodingSequences"
-originalHeatmap="EricaceaeExample/EricalesHeatMap.png"
 referencesID="referenceIDs.txt"
-blastOutDir="EricaceaeExample/Blast"
-blastResults="EricaceaeExample/Blast/Results"
-plastidFastas="EricaceaeExample/Blast/PlastidSequences"
-referenceGenes="EricaceaeExample/Blast/ReferenceGeneSequences"
-unalignedMultiFastas="EricaceaeExample/unalignedMultiFastas"
-alignedMultiFastas="EricaceaeExample/alignedMultiFastas"
-updatedPresenceAbsenceTSV="EricaceaeExample/EricalesPresenceAbsence-updated.tsv"
-changeLog="EricaceaeExample/changeLog.tsv"
-updatedHeatmap="EricaceaeExample/EricalesHeatMap-updated.png"
+aliasFile="gene_alias.txt"
+
+# Outputs
+multiGenBankFile="$projectDir/Ericales.gbk"
+presenceAbsenceTSV="$projectDir/EricalesPresenceAbsence.tsv"
+presentGeneSequences="$projectDir/presentGeneSequences"
+presentGeneCodingSequences="$projectDir/presentGeneCodingSequences"
+originalHeatmap="$projectDir/EricalesHeatMap.png"
+blastOutDir="$projectDir/Blast"
+blastResults="$projectDir/Blast/Results"
+plastidFastas="$projectDir/Blast/PlastidSequences"
+referenceGenes="$projectDir/Blast/ReferenceGeneSequences"
+unalignedMultiFastas="$projectDir/unalignedMultiFastas"
+alignedMultiFastas="$projectDir/alignedMultiFastas"
+updatedPresenceAbsenceTSV="$projectDir/EricalesPresenceAbsence-updated.tsv"
+changeLog="$projectDir/changeLog.tsv"
+updatedHeatmap="$projectDir/EricalesHeatMap-updated.png"
 
 # Create output directory
-mkdir -p EricaceaeExample
+mkdir -p "$projectDir"
 
 # Downloading files from GenBank
 python3 "$scriptDir/fetchGenBank.py" \
