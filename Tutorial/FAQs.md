@@ -37,10 +37,11 @@ If `blastProcessing-singleSeq.py` is used, then the whole gene will not be recov
 As this script extracts the longest sequence the different exon(s) could be extracted from different sequences.
 
 ### How accurate is the updated presence/absence TSV?
-The TSV output `UpdateTSV.py` from will not be an accurate assessment of whether genes found are present in full if the alignments are used straight from `aligner.py`. 
+The TSV output `UpdateTSV.py` from will not be an accurate assessment of whether genes found are present in full if the alignments are used straight from `aligner.py`, manual inspection and editing is likely necessary. 
 It is unlikely that a gene will be called as present if using the output from aligner.py to feed straight into `UpdateTSV.py` as it was written to be conservative and has stringent requirements in order to call a gene as "present". 
 The similarity and coverage thresholds can be lowered by the user but proper checking of all the alignments is necessary to make sure that all sequences are in frame. 
-The output TSV can also be edited manually to reflect changes in gene status discovered by manual editing.
+The output TSV can also be edited manually to reflect changes in gene status discovered by manual editing. 
+Take extra care interpreting these results if you are working with taxa that use an [alternative genetic code](https://www.pnas.org/doi/10.1073/pnas.1816822116) or have [high rates of RNA editing](https://academic.oup.com/nar/article/31/9/2417/1080299?login=false).    
 
 ### Does this test if detected tRNA genes have functional anticodons?
 No. The pipeline uses similarity and percentage coverage of the reference sequence only to call non-coding protein genes' status. 
