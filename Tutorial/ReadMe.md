@@ -203,7 +203,7 @@ The following arguments are optional:
 
 **Example command:** 
 ```
-python3 blastProcessing.py --output-dir unalignedMultiFastas --merge-gap 800 --blast-dir Blast/Results  --reference-dir Blast/ReferenceGeneSequences --genome-dir Blast/PlastidSequences
+python3 blastProcessing-singleSeq.py --output-dir unalignedMultiFastas --merge-gap 800 --blast-dir Blast/Results  --reference-dir Blast/ReferenceGeneSequences --genome-dir Blast/PlastidSequences
 ``` 
 
 
