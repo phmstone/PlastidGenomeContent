@@ -246,7 +246,7 @@ The following arguments are optional:
 
 **Example command:** 
 ```
-python3 updateTSV.py --ogTSV EricalesPresenceAbsence.tsv
+python3 updateTSV.py --ogTSV EricalesPresenceAbsence.tsv --alignDir alignedMultiFastas
 ```
 
 
