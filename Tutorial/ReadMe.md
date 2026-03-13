@@ -50,14 +50,14 @@ Make one [here](https://account.ncbi.nlm.nih.gov/signup/?).
 
 
 
-## II. Downloading .gbk files from GenBank
+## II. Downloading .gb files from GenBank
 
 To run pipeline you will need a list of GenBank IDs that relate to sequences for the taxa of interest.    
 For this example we are using whole plastome sequences of some species in Ericales. The example file is called `EricalesGenBankIDs.txt`.    
 Each GenBank ID must be on a new line, and the list should be a `.txt` file.    
 If using pipeline to investigate plastid genome degradation, make sure that all GenBank IDs selected correspond to whole and not partial plastid genomes.
 
-Use `fetchGenBank.py` to download the accession sequences into one GenBank (`.gbk`) file.    
+Use `fetchGenBank.py` to download the accession sequences into one GenBank (`.gb`) file.    
 
 The following arguments are required:    
 * `--email` The email address associated with your NCBI account.
@@ -66,7 +66,7 @@ The following arguments are required:
 
 **Example command:** 
 ```
-python3 fetchGenBank.py --email your.NCBI.account@email.address --input EricalesGenBankIDs.txt --output Ericales.gbk
+python3 fetchGenBank.py --email your.NCBI.account@email.address --input EricalesGenBankIDs.txt --output Ericales.gb
 ```   
 
 This will create a multi-sequence GenBank file in the directory `Outputs`.    
@@ -98,7 +98,7 @@ Multifasta files named by gene containing the full coding sequence/gene sequence
 The directory containing these is named `PresentCodingSeqMultiFastas` by default, but a different name can be chosen with the `--outdir` flag.    
 
 The following arguments are required:
-* `--input` The .gbk file downloaded in the previous step
+* `--input` The .gb file downloaded in the previous step
 * `--tsv` The name of the output presence/absence matrix .TSV file.
 
 The following arguments are optional:
@@ -146,8 +146,8 @@ The reference sequences should be identified by their GenBank IDs and the refere
 If some of the sequences supplied in the original GenBank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST.
 
 #### Outputs
-Fasta files from the GenBank sequences in the original .txt file list, BLAST directories, BLAST results, and .gbk files for the "reference" sequences are all produced and organised automatically in directories.     
-Fasta files, BLAST database files, and .gbk files are all named after the relevant GenBank ID. BLAST results are stored in directories named after the GenBank ID that was used to make the BLAST database, and individual results files are named by gene name.    
+Fasta files from the GenBank sequences in the original .txt file list, BLAST directories, BLAST results, and .gb files for the "reference" sequences are all produced and organised automatically in directories.     
+Fasta files, BLAST database files, and .gb files are all named after the relevant GenBank ID. BLAST results are stored in directories named after the GenBank ID that was used to make the BLAST database, and individual results files are named by gene name.    
 By default, a new directory called `Blast` is created for all the output files and directories to go into, but the directory name can be changed.
 
 The following arguments are required:
