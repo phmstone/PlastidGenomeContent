@@ -161,7 +161,7 @@ The following arguments are optional:
 
 **Example command:** 
 ```
-python3 blastPresenceAbsence.py --input EricalesPresenceAbsence.tsv --email your.NCBI.account@email.address --reference-ids referenceIDs.txt --blast-type blastn`
+python3 blastPresenceAbsence.py --input EricalesPresenceAbsence.tsv --email your.NCBI.account@email.address --reference-ids referenceIDs.txt --blast-type blastn
 ```   
 
 
@@ -190,6 +190,7 @@ The following arguments are optional:
 ```
 python3 blastProcessing.py --output-dir unalignedMultiFastas --ir-cutoff 4000 --blast-dir Blast/Results  --reference-dir Blast/ReferenceGeneSequences --genome-dir Blast/PlastidSequences
 ``` 
+
 
 `blastProcessing-singleSeq.py`
 The following arguments are required:
