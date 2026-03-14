@@ -170,6 +170,7 @@ python3 blastPresenceAbsence.py --input EricalesPresenceAbsence.tsv --email your
 The results from the BLAST searches can be used to extract putative gene sequences, which can then be put into alignments with the present genes that were extracted in `presenceAbsence.py`.    
 Pseudogenes annotated on GenBank are not extracted and put into the alignments here, as they should have sufficient homology to be pulled out with this approach.   
 Sequences with very long hits where the entire SSC region of a plastid is likely to have been captured are flagged and put in a file called `FilesToCheckAgain.txt`.
+In order to include all sequences found as "present" for you taxa of interest, use the `present-genes` and point to the directory containing those multifastas.
 Gene/taxon combinations where no BLAST hit was found are written out in a file called `NoHits.txt`.
 Do this with the script `blastProcessing.py` or `blastProcessing-singleSeq.py`. 
 `blastProcessing.py` merges hits based on their absolute start and end coordinates in the genome, where as `blastProcessing-singleSeq.py` merges hits based on the genomic distance between the hits and will only append the single longest merged sequence.    
@@ -185,6 +186,7 @@ The following arguments are required:
 The following arguments are optional:
 * `--flanking-region` The number of base pairs taken before and after the the start and end of the blast hit. the default value is `0`.
 * `--ir-cutoff` On rare occasions the script will incorrectly process multiple blast hits together to create a very long sequence. Files with a sequence over the length set here will be flagged. The defualt value is `5000`.
+* `--present-genes` Directory containing "present" sequences (full gene or coding sequence) for genes of interest in fasta format. 
 
 **Example command:** 
 ```
@@ -201,6 +203,7 @@ The following arguments are required:
 
 The following arguments are optional:
 * `--merge-gap` The maximum number of base pairs in between to blast hits for those hits to be merged into one sequence.
+* `--present-genes` Directory containing "present" sequences (full gene or coding sequence) for genes of interest in fasta format. 
 
 **Example command:** 
 ```

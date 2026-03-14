@@ -70,7 +70,8 @@ This script merges blast hits together based on the start and end site of the "f
 All of the above directories are generated inside `Blast` by `blastPresenceAbsence.py` automatically and these directories are set as defaults in the script.  
 An output directory name can be specified, or the multifasta files and .txt flagging files will be put in a directory called `unalignedMultifastas`.  
 The threshold for how long a blast hit has to be to be flagged can be adjusted with `--ir-cutoff` but the default is 5000.  
-The number of base pairs flanking the blast hit to be included in the final multifasta file can be specified hit with `--flanking-region`, but the default is set to 0.  
+The number of base pairs flanking the blast hit to be included in the final multifasta file can be specified hit with `--flanking-region`, but the default is set to 0.     
+All present gene sequences (full gene or coding sequences) pulled out with `presenceAbsence.py` can be added into the output multifastas with the flag `--present_genes` to specify the directory where these multifastas can be found.
 
 ## blastProcessing-singleSeq.py    
 This script runs in a similar way to `blastProcessing.py`, but processes the blast hits differently and has a slightly different output.
@@ -83,6 +84,7 @@ All of the above directories are generated inside `Blast` by `blastPresenceAbsen
 An output directory name can be specified, or the multifasta files and .txt flagging files will be put in a directory called `unalignedMultifastas`.  
 The maximum distance in bp between two hits to be merged into one can be controlled with `--merge-gap`, the default is set to 1000.
 This script will only ever return one sequence per gene/species combination; the longest one possible with the specified merge gap allowance.
+  All present gene sequences (full gene or coding sequences) pulled out with `presenceAbsence.py` can be added into the output multifastas with the flag `--present_genes` to specify the directory where these multifastas can be found.
   
 ## aligner.py
 This script aligns the files in `unalignedMultifastas`output by `blastProcessing.py` or `blastProcessing-singleSeq.py`.  

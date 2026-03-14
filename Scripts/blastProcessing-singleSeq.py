@@ -29,41 +29,40 @@ from Bio.SeqRecord import SeqRecord
 # get rid of this at a later date
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description=(
-            "Extract gene sequences from plastid genomes using blast results "
-            "and append them to gene-specific alignment FASTA files."))
+parser = argparse.ArgumentParser(
+    description=(
+        "Extract gene sequences from plastid genomes using blast results "
+        "and append them to gene-specific alignment FASTA files."))
 
-    # Directory containing BLAST result subfolders
-    parser.add_argument("--blast-dir", default="Blast/Results")
+# Directory containing BLAST result subfolders
+parser.add_argument("--blast-dir", default="Blast/Results")
 
-    # Directory containing reference gene FASTA files
-    parser.add_argument("--reference-dir", default="Blast/ReferenceGeneSequences")
+# Directory containing reference gene FASTA files
+parser.add_argument("--reference-dir", default="Blast/ReferenceGeneSequences")
 
-    # Directory containing plastid genome FASTA files
-    parser.add_argument("--genome-dir", default="Blast/PlastidSequences")
+# Directory containing plastid genome FASTA files
+parser.add_argument("--genome-dir", default="Blast/PlastidSequences")
 
-    # Output directory for gene-specific alignment FASTA files
-    parser.add_argument("--output-dir", required=True)
+# Output directory for gene-specific alignment FASTA files
+parser.add_argument("--output-dir", required=True)
 
-    # Optional flanking region to extract around BLAST hits
-    parser.add_argument("--flanking-region", type=int, default=0,
-                        help="Number of bases to extract upstream and downstream of merged hit.")
+# Optional flanking region to extract around BLAST hits
+parser.add_argument("--flanking-region", type=int, default=0,
+                    help="Number of bases to extract upstream and downstream of merged hit.")
 
-    # Maximum allowed genomic distance between BLAST hits when merging
-    parser.add_argument("--merge-gap", type=int, default=1000,
-                        help="Max genomic gap allowed when merging HSPs (default=1000).")
+# Maximum allowed genomic distance between BLAST hits when merging
+parser.add_argument("--merge-gap", type=int, default=1000,
+                    help="Max genomic gap allowed when merging HSPs (default=1000).")
 
+# Allowed length difference when determining IR duplicates
+parser.add_argument("--ir-length-tolerance", type=int, default=50,
+                    help="Length difference tolerance for IR duplicate removal.")
 
-    # Allowed length difference when determining IR duplicates
-    parser.add_argument("--ir-length-tolerance", type=int, default=50,
-                        help="Length difference tolerance for IR duplicate removal.")
+# Optional directory containing additional full sequence gene FASTAs found earlier
+parser.add_argument("--present-genes",
+                    help="Optional directory containing additional unaligned gene/CDS FASTA files (*.fasta)")
 
-    return parser.parse_args()
-
-
-args = parse_args()
+args = parser.parse_args()
 
 # Ensure output directory exists
 os.makedirs(args.output_dir, exist_ok=True)
@@ -289,6 +288,68 @@ for directory in blast_folders:
                     f"{geneName}-alignment-unaligned.fasta")
                 with open(aln_path, "a") as out:
                     SeqIO.write(new_record, out, "fasta")
+
+
+# ---------------------------------------------------------------------------------------------------
+# Optionally add sequences from present gene FASTA files
+# ---------------------------------------------------------------------------------------------------
+
+if args.present_genes:
+
+    for gene in geneList:
+
+        aln_path = os.path.join(args.output_dir, f"{gene}-alignment-unaligned.fasta")
+
+        if not os.path.exists(aln_path):
+            continue
+
+        # read existing sequences
+        existing_sequences = set()
+        existing_accessions = set()
+
+        for record in SeqIO.parse(aln_path, "fasta"):
+            seq_str = str(record.seq)
+            existing_sequences.add(seq_str)
+
+            acc = record.id.split("|")[0]
+            acc = acc.split(".")[0]
+            existing_accessions.add(acc)
+
+        # find present gene files
+        for f in os.listdir(args.present_genes):
+
+            if not f.lower().startswith(gene):
+                continue
+
+            if not f.endswith(".fasta"):
+                continue
+
+            fasta_path = os.path.join(args.present_genes, f)
+
+            new_records = []
+
+            for record in SeqIO.parse(fasta_path, "fasta"):
+
+                seq_str = str(record.seq)
+
+                acc = record.id.split()[0]
+                acc = acc.replace(">", "")
+                acc = acc.split(".")[0]
+
+                if seq_str in existing_sequences:
+                    continue
+
+                if acc in existing_accessions:
+                    continue
+
+                new_records.append(record)
+
+                existing_sequences.add(seq_str)
+                existing_accessions.add(acc)
+
+            if new_records:
+                with open(aln_path, "a") as out:
+                    SeqIO.write(new_records, out, "fasta")
 
 
 print("Finished.")
