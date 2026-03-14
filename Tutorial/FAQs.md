@@ -23,7 +23,13 @@ Use `fetchGenbank.py` and `presenceAbsence.py` with an input of the gene list yo
 The outputs of `presenceAbsence.py` will show which taxa contain all genes in your gene list and are suitable to be used as references.
 
 ### What if my "reference" sequence doesn't include all the genes I want to study?
-Choose a different sequence that does contain the full complement of genes, or remove genes missing from the reference from the gene list.
+Choose a different sequence that does contain the full complement of genes, or remove genes missing from the reference from the gene list.    
+You can use the first two scripts with a large number of GenBank IDs as input to identify accessions that do have all genes. 
+The easiest way to see this by making a heat map figure, or by summing up the total count of the presence/absence .tsv by accession. Accessions with all genes present will have a sum of 0.
+
+### One of taxa I am studying has a much lower number of present genes than I am expecting, what could be wrong?
+It's possible that this GenBank accession is not very well annotated, so even though genes are present they are not annotated and will not be recognised by the first part of the pipeline. 
+Alternative gene names may also have been used to annotate this accession, have a look at the GenBank file and make an alias file if this is the case.
 
 ### I want to use the pipeline but my sequences aren't on GenBank. Will it still work?
 Yes, as long as you have copies of the sequences in .fasta and .gbk format with the same name (except for the file extension). 
