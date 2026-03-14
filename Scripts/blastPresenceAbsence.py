@@ -86,10 +86,9 @@ print(f"Using {len(gene_names)} genes from TSV header as canonical names")
 missing_taxa_ids = []
 complete_taxa_ids = []
 
-# if all genes are present in a plastid genome, then all entries will be identical 
-# technically this means plastid genomes with all missing genes or all pseudogenes would go into "complete taxa" here
+# if all genes are present in  a plastid genome, record that so it can be used as a reference
 for i, profile in enumerate(presence_absence):
-    if len(set(profile)) == 1:
+    if all(value == "0" for value in profile):
         complete_taxa_ids.append(genbank_ids[i])
     else:
         missing_taxa_ids.append(genbank_ids[i])
