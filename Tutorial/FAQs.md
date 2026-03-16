@@ -18,6 +18,11 @@ If in doubt about alternative spellings of gene names, add them to an alias file
 ### How many alternative spellings/names can be added to the alias file?
 As many as you like.
 
+### How will I know if I need to use an alias file?
+If one of the genomes you are looking into was annotated a while ago, it may have alternative names for some genes like _ycf1_ or _ycf2_. 
+If you've already made a presence/absence table or figure, then see if whole suites of genes are missing unexpectedly (e.g. tRNA, rRNA, _ndh_). 
+This could indicate a systemic formatting difference in these gene names that the normalisation is unable to handle.
+
 ### How do I know if the sequences I want to use as references have all genes in my gene list annotated as present?
 Use `fetchGenbank.py` and `presenceAbsence.py` with an input of the gene list you want to use and a list of GenBank IDs for the taxa you are considering using as references. 
 The outputs of `presenceAbsence.py` will show which taxa contain all genes in your gene list and are suitable to be used as references.
@@ -39,8 +44,7 @@ It may be easier to run the pipeline through once with sequences from genbank in
 ### Will this pipeline recover genes with trans-spliced introns?
 In angiosperm chloroplast genomes, _rps12_ is the only gene with trans-spliced introns. 
 Alignments for genes with trans-spliced will take more manual curation, but if `blastProcessing.py` is used then the full sequence should be recovered.
-If `blastProcessing-singleSeq.py` is used, then the whole gene will not be recovered. 
-As this script extracts the longest sequence the different exon(s) could be extracted from different sequences.
+If `blastProcessing-singleSeq.py` is used, then the whole gene will not be recovered, as this script extracts the longest sequence for each taxon the different exon(s) could be extracted from different sequences.
 
 ### How accurate is the updated presence/absence TSV?
 The TSV output `UpdateTSV.py` from will not be an accurate assessment of whether genes found are present in full if the alignments are used straight from `aligner.py`, manual inspection and editing is likely necessary. 
