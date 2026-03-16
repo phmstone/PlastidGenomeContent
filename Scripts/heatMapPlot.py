@@ -26,11 +26,11 @@ parser = argparse.ArgumentParser(
     description="Plot gene status matrix from TSV file.")
 
 parser.add_argument(
-    "input_file",
+    "--input_file",
     help="Input presence/absence TSV file ")
 
 parser.add_argument(
-    "-o", "--output",
+    "--output",
     default="heatMapPlot.png",
     help="Output image filename (default: heatMapPlot.png)")
 

@@ -122,14 +122,14 @@ Use `heatMapPlot.py` to create a "heatmap" style figure showing which genes are 
 If no output file name is given then the image will be named `heatMapPlot.png`.     
 
 The following argument is required:
-* File name of the input .TSV with presence/absence data.
+* `--input` File name of the input .TSV with presence/absence data.
 
 The following argument is optional:
-* `-o` The name of the .png file of the plot.
+* `--output` The name of the .png file of the plot.
 
 **Example command:** 
 ```
-python3 heatMapPlot.py EricalesPresenceAbsence.tsv -o EricalesHeatMap.png
+python3 heatMapPlot.py --input EricalesPresenceAbsence.tsv --output EricalesHeatMap.png
 ```
 
 ## V. Finding other sequences with BLAST
@@ -260,14 +260,14 @@ Use `heatMapPlot.py` again to create a "heatmap" style figure showing which gene
 Make sure that the figure has a different name to the one created in step IV with the GenBank annotations.
 
 The following argument is required:
-* File name of the input .TSV with presence/absence data.
+* `--input` File name of the updated .TSV with presence/absence data.
 
 The following argument is optional:
-* `-o` The name of the .png file of the plot.
+* `--output` The name of the .png file of the plot.
 
 **Example command:** 
 ```
-python3 heatMapPlot.py updatedPA.tsv -o EricalesHeatMap-updated.png
+python3 heatMapPlot.py --input updatedPA.tsv --output EricalesHeatMap-updated.png
 ``` 
 
 
