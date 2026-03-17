@@ -83,8 +83,8 @@ for gene in geneList:
     alignment_path = os.path.join(args.output_dir, f"{gene}-alignment-unaligned.fasta")
     reference_fasta = os.path.join(args.reference_dir, f"{gene}.fasta")
  
-    # Only add reference sequences if the alignment file does not already exist
-    if os.path.exists(reference_fasta) and not os.path.exists(alignment_path):
+    # Make new files each time and start by adding reference sequences
+    if os.path.exists(reference_fasta):
         with open(alignment_path, "w") as alignment_file:
             for record in SeqIO.parse(reference_fasta, "fasta"):
                 SeqIO.write(record, alignment_file, "fasta")
