@@ -26,8 +26,6 @@ rpl10
 rpl16
 rpl2
 rpl5
-rpl6
-rpl8
 rps1
 rps10
 rps11
