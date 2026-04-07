@@ -34,6 +34,7 @@ parser.add_argument("--email", required=True, help="Email address for NCBI")
 parser.add_argument("--reference-ids", required=False, default=None, help="Text file of reference GenBank accessions")
 parser.add_argument("--blast-type", choices=["blastn", "tblastx"], default="blastn", help="BLAST program to use")
 parser.add_argument("--outdir", default="Blast", help="Base output directory (subdirectories will be created and named automatically)")
+parser.add_argument("--fastaMode", required=False, help="FASTA file of reference gene sequences. Headers must start with gene name matching TSV (before underscore).")
 args = parser.parse_args()
 
 # ----------------------------------------------------------
@@ -104,148 +105,206 @@ for taxon_idx, profile in enumerate(presence_absence):
         if value in {"1", "2"}:  # 1=missing, 2=pseudogene
             missing_by_gene[gene_idx].append(genbank_ids[taxon_idx])
 
-# ----------------------------------------------------------
-# Read reference accessions and make new references
-# ----------------------------------------------------------
-
-# empty list for reference IDs to be filled in from user input reference ID .txt file or from .TSV
-reference_ids = []
-
-# Add in reference IDs from the user input reference ID file if present
-if args.reference_ids:
-    with open(args.reference_ids) as fh:
-        reference_ids = [line.strip() for line in fh if line.strip()]
-
-# Add taxa from the TSV that had all genes present to reference IDs
-reference_ids += complete_taxa_ids
-reference_ids = list(set(reference_ids))  # remove duplicates
-
-# Print error message if the reference ID list is empty
-if not reference_ids:
-    raise ValueError("Error: No reference sequences available. \n"
-                    "Provide --reference-ids .txt file.")
 
 # ----------------------------------------------------------
-# Download reference GenBank files
+# FASTA MODE: Use user-provided reference sequences
 # ----------------------------------------------------------
+if args.fastaMode:
+    print("FASTA mode enabled: using user-provided reference sequences")
 
-# make the directory for reference genbank files if it doesn't already exist
-os.makedirs(args.reference_gbk_dir, exist_ok=True)
-reference_gbk_files = []
+    os.makedirs(args.reference_outdir, exist_ok=True)
 
-# loop over the accession numbers fo the reference sequences
-for accession in reference_ids:
-    gbk_file = os.path.join(args.reference_gbk_dir, f"{accession}.gbk")
-    reference_gbk_files.append(gbk_file)
-    if os.path.exists(gbk_file):
-        continue
-    print(f"Downloading reference genome {accession}")
-    # download the reference sequence .gbk file
-    with Entrez.efetch(db="nucleotide", id=accession, rettype="gbwithparts", retmode="text") as handle, open(gbk_file, "w") as out:
-        out.write(handle.read())
-    # add in a 1s delay between each request for genbank
-    time.sleep(1)
+    # track which genes have at least one sequence
+    genes_found = set()
 
-# ----------------------------------------------------------
-# Define gene lists and alternative spellings
-# ----------------------------------------------------------
+    # parse FASTA
+    for record in SeqIO.parse(args.fastaMode, "fasta"):
+        header = record.id
 
-# make lowercase set of canonical genes (the genes from the TSV file)
-gene_names_set = set([g.lower() for g in gene_names])
-
-# separate lists for rRNA and tRNA if present in header
-rrna_list = [g for g in gene_names if re.search(r"rrn|rRNA", g, re.IGNORECASE)]
-trna_list = [g for g in gene_names if g.lower().startswith("trn")]
-
-# create normalized tRNA variants for matching
-trna_hyphen, trna_underscore, trna_bracket, trna_no_punct = [], [], [], []
-for gene in trna_list:
-    gene_l = gene.lower()
-    trna_hyphen.append(gene_l)
-    trna_underscore.append(gene_l.replace('-', '_'))
-    trna_bracket.append(gene_l.replace('-', '(') + ")")
-    trna_no_punct.append(gene_l.replace('-', '').replace('(', '').replace(')', ''))
-
-
-# ----------------------------------------------------------
-# Extract genes from reference GenBank files
-# ----------------------------------------------------------
-
-# make the fasta file directory if it doesn't already exist
-os.makedirs(args.reference_outdir, exist_ok=True)
-# track the number of times genes are written per reference genome to avoid duplicates (from the IR)
-genes_written = set()
-
-for gbk in reference_gbk_files:
-	# parse .gbk file into a seq record object
-    record = SeqIO.read(gbk, "genbank")
-    for feature in record.features:
-    	# skip features that aren't genes, CDS, tRNA, or rRNA
-        if feature.type not in {"gene", "CDS", "tRNA", "rRNA"}:
-            continue
-
-        # get gene name from actual gene feature or if not from the product
-        gene_name = feature.qualifiers.get("gene", feature.qualifiers.get("product", [""]))[0].lower()
-        # more complicated for rrna
-        rrna_match = re.search(r'(\d+(?:\.\d+)?)s\s+ribosomal', gene_name)
-        if rrna_match:
-        	number = rrna_match.group(1)
-        	gene_name_norm = f"rrn{number}"
+        # extract gene name (before underscore)
+        if "_" in header:
+            gene = header.split("_")[0]
         else:
-        	gene_name_norm = re.sub(r'[\s_\-()]', '', gene_name)
-        	gene_name_norm = gene_name_norm.replace("rna", "")
-        	gene_name_norm = re.sub(r'rrn(\d+(?:\.\d+)?)s$', r'rrn\1', gene_name_norm)
+            gene = header
 
-        gene_id = None
-
-        # figure out which gene the gene links to in the lists of gene names generated above
-        if gene_name_norm in gene_names_set:
-            gene_id = gene_name
-        # more complicated for trna
-        elif gene_name in trna_hyphen + trna_underscore + trna_bracket + trna_no_punct:
-            for idx, canonical in enumerate(trna_list):
-                variants = [trna_hyphen[idx], trna_underscore[idx], trna_bracket[idx], trna_no_punct[idx]]
-                if gene_name in variants:
-                    gene_id = canonical
-                    break
-                    
-		# skip if that gene is already dealt with (IR) or not recognised                    
-        if gene_id is None:
-            continue
-        seq_combo = (record.id, gene_id)
-        if seq_combo in genes_written:
+        # validate gene name
+        if gene not in gene_names:
             continue
 
-		# write sequence to a fasta file
-        outfile = os.path.join(args.reference_outdir, f"{gene_id}.fasta")
+        # validate header format (no forbidden chars)
+        if any(c in header for c in ["|", ":", " "]):
+            raise ValueError(f"Invalid FASTA header: {header}")
+
+        outfile = os.path.join(args.reference_outdir, f"{gene}.fasta")
         with open(outfile, "a") as out:
-            out.write(f">{record.id} {gene_id}\n")
-            out.write(str(feature.extract(record.seq)) + "\n")
+            out.write(f">{header}\n{str(record.seq)}\n")
 
-        genes_written.add(seq_combo)
+        genes_found.add(gene)
+
+    # check all genes are represented
+    missing = set(gene_names) - genes_found
+    if missing:
+        raise ValueError(
+            "ERROR: Missing reference sequences for genes:\n" +
+            "\n".join(sorted(missing)))
+
+    print(f"Loaded reference sequences for {len(genes_found)} genes")
+
 
 
 # ----------------------------------------------------------
-# Check that all genes have at least one reference sequence
+# GENBANK MODE (default)
 # ----------------------------------------------------------
 
-missing_reference_genes = []
+if not args.fastaMode:
 
-for gene in gene_names:
-    fasta_path = os.path.join(args.reference_outdir, f"{gene}.fasta")
-    if not os.path.exists(fasta_path) or os.path.getsize(fasta_path) == 0:
-        missing_reference_genes.append(gene)
-        
-if missing_reference_genes:
-    for gen in missing_reference_genes:
-        raise ValueError("ERROR: the following genes have no reference sequences:\n" +
-        "\n".join(missing_reference_genes) +
-        "\nAdd reference genomes containing these genes or remove them from the gene list.")
+	# ----------------------------------------------------------
+	# Read reference accessions and make new references
+	# ----------------------------------------------------------
+	
+	# empty list for reference IDs to be filled in from user input reference ID .txt file or from .TSV
+	reference_ids = []
+	
+	# Add in reference IDs from the user input reference ID file if present
+	if args.reference_ids:
+		with open(args.reference_ids) as fh:
+			reference_ids = [line.strip() for line in fh if line.strip()]
+	
+	# Add taxa from the TSV that had all genes present to reference IDs
+	reference_ids += complete_taxa_ids
+	reference_ids = list(set(reference_ids))  # remove duplicates
+	
+	# Print error message if the reference ID list is empty
+	if not reference_ids:
+		raise ValueError("Error: No reference sequences available. \n"
+						"Provide a --reference-ids .txt file containing at least taxon with all genes present or remove genes from the gene list so at least one taxon has all genes present. \n"
+						"Alternatively try running in --fastaMode using a hybrid reference file. \n"
+						"Find instructions for --fastaMode on the GitHub.")
+	
+	# ----------------------------------------------------------
+	# Download reference GenBank files
+	# ----------------------------------------------------------
+	
+	# make the directory for reference genbank files if it doesn't already exist
+	os.makedirs(args.reference_gbk_dir, exist_ok=True)
+	reference_gbk_files = []
+	
+	# loop over the accession numbers fo the reference sequences
+	for accession in reference_ids:
+		gbk_file = os.path.join(args.reference_gbk_dir, f"{accession}.gbk")
+		reference_gbk_files.append(gbk_file)
+		if os.path.exists(gbk_file):
+			continue
+		print(f"Downloading reference genome {accession}")
+		# download the reference sequence .gbk file
+		with Entrez.efetch(db="nucleotide", id=accession, rettype="gbwithparts", retmode="text") as handle, open(gbk_file, "w") as out:
+			out.write(handle.read())
+		# add in a 1s delay between each request for genbank
+		time.sleep(1)
+	
+	# ----------------------------------------------------------
+	# Define gene lists and alternative spellings
+	# ----------------------------------------------------------
+	
+	# make lowercase set of canonical genes (the genes from the TSV file)
+	gene_names_set = set([g.lower() for g in gene_names])
+	
+	# separate lists for rRNA and tRNA if present in header
+	rrna_list = [g for g in gene_names if re.search(r"rrn|rRNA", g, re.IGNORECASE)]
+	trna_list = [g for g in gene_names if g.lower().startswith("trn")]
+	
+	# create normalized tRNA variants for matching
+	trna_hyphen, trna_underscore, trna_bracket, trna_no_punct = [], [], [], []
+	for gene in trna_list:
+		gene_l = gene.lower()
+		trna_hyphen.append(gene_l)
+		trna_underscore.append(gene_l.replace('-', '_'))
+		trna_bracket.append(gene_l.replace('-', '(') + ")")
+		trna_no_punct.append(gene_l.replace('-', '').replace('(', '').replace(')', ''))
+	
+	
+	# ----------------------------------------------------------
+	# Extract genes from reference GenBank files
+	# ----------------------------------------------------------
+	
+	# make the fasta file directory if it doesn't already exist
+	os.makedirs(args.reference_outdir, exist_ok=True)
+	# track the number of times genes are written per reference genome to avoid duplicates (from the IR)
+	genes_written = set()
+	
+	for gbk in reference_gbk_files:
+		# parse .gbk file into a seq record object
+		record = SeqIO.read(gbk, "genbank")
+		for feature in record.features:
+			# skip features that aren't genes, CDS, tRNA, or rRNA
+			if feature.type not in {"gene", "CDS", "tRNA", "rRNA"}:
+				continue
+	
+			# get gene name from actual gene feature or if not from the product
+			gene_name = feature.qualifiers.get("gene", feature.qualifiers.get("product", [""]))[0].lower()
+			# more complicated for rrna
+			rrna_match = re.search(r'(\d+(?:\.\d+)?)s\s+ribosomal', gene_name)
+			if rrna_match:
+				number = rrna_match.group(1)
+				gene_name_norm = f"rrn{number}"
+			else:
+				gene_name_norm = re.sub(r'[\s_\-()]', '', gene_name)
+				gene_name_norm = gene_name_norm.replace("rna", "")
+				gene_name_norm = re.sub(r'rrn(\d+(?:\.\d+)?)s$', r'rrn\1', gene_name_norm)
+	
+			gene_id = None
+	
+			# figure out which gene the gene links to in the lists of gene names generated above
+			if gene_name_norm in gene_names_set:
+				gene_id = gene_name
+			# more complicated for trna
+			elif gene_name in trna_hyphen + trna_underscore + trna_bracket + trna_no_punct:
+				for idx, canonical in enumerate(trna_list):
+					variants = [trna_hyphen[idx], trna_underscore[idx], trna_bracket[idx], trna_no_punct[idx]]
+					if gene_name in variants:
+						gene_id = canonical
+						break
+						
+			# skip if that gene is already dealt with (IR) or not recognised                    
+			if gene_id is None:
+				continue
+			seq_combo = (record.id, gene_id)
+			if seq_combo in genes_written:
+				continue
+	
+			# write sequence to a fasta file
+			outfile = os.path.join(args.reference_outdir, f"{gene_id}.fasta")
+			with open(outfile, "a") as out:
+				out.write(f">{record.id} {gene_id}\n")
+				out.write(str(feature.extract(record.seq)) + "\n")
+	
+			genes_written.add(seq_combo)
 
+
+	# ----------------------------------------------------------
+	# Check that all genes have at least one reference sequence
+	# ----------------------------------------------------------
+	
+	missing_reference_genes = []
+	
+	for gene in gene_names:
+		fasta_path = os.path.join(args.reference_outdir, f"{gene}.fasta")
+		if not os.path.exists(fasta_path) or os.path.getsize(fasta_path) == 0:
+			missing_reference_genes.append(gene)
+			
+	if missing_reference_genes:
+		for gen in missing_reference_genes:
+			raise ValueError("ERROR: the following genes have no reference sequences:\n" +
+			"\n".join(missing_reference_genes) +
+			"\nAdd reference genomes containing these genes or remove them from the gene list." +
+			"\nAlternatively, use fasta mode and provide your own reference gene sequences in a single fasta file.")
+	
 
 # ----------------------------------------------------------
 # Download plastid FASTA for missing taxa
 # ----------------------------------------------------------
+
+# back to common script for both modes 
 
 # make the directory for plastid fasta sequences for accessions with missing genes
 os.makedirs(args.plastid_fasta_dir, exist_ok=True)
@@ -281,8 +340,8 @@ for fasta_file in os.listdir(args.plastid_fasta_dir):
         "-in", fasta_path,
         "-out", db_prefix,
         "-dbtype", "nucl",
-        "-parse_seqids"
-    ], check=True)
+        "-parse_seqids"], 
+    check=True)
 
 # ----------------------------------------------------------
 # Run BLAST to recover missing genes

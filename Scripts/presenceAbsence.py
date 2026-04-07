@@ -195,6 +195,7 @@ for key in no_gene_list:
 # print the genbank IDs that have no gene annotations if there are any
 if len(no_gene_list) > 0:
     print(f"Removed {len(no_gene_list)} sequences with no gene annotations: {no_gene_list}")
+    print("Check the GenBank file to see if an alias file is needed to accmmodate alternative gene names for these taxa.")
 # print the number of sequences moving forward
 print(f"Remaining sequences: {len(records)}")
 
