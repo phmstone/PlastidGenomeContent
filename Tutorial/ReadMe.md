@@ -1,7 +1,7 @@
 # REGRO Tutorial
 
 This tutorial will go through REGRO step by step using discovery mode to investigate plastid genome degradation in autotrophic and mycoheterotrophic taxa in Ericales.
-All necessary files can be found in the [example files directory](https://github.com/phmstone/PlastidGenomeContent/tree/main/Tutorial/exampleFiles).
+All necessary files can be found in the [example files directory](https://github.com/phmstone/REGRO/tree/main/Tutorial/exampleFiles).
 
 ## I. Installation and prerequisites
 
@@ -10,7 +10,7 @@ You can obtain the pipeline in one of the following ways.
 
 Clone the repository (recommended)    
 ```
-git clone https://github.com/phmstone/PlastidGenomeContent.git    
+git clone https://github.com/phmstone/REGRO.git    
 cd REPOSITORY
 ```
 
@@ -21,7 +21,7 @@ Extract the archive and navigate to the directory.
 
 Command line download       
 ```
-wget https://github.com/phmstone/PlastidGenomeContent/archive/refs/heads/main.zip    
+wget https://github.com/phmstone/REGRO/archive/refs/heads/main.zip    
 unzip main.zip
 ```
 
@@ -84,7 +84,7 @@ An example file for ribosomal protein genes is included (`ribosomalProteinGenes.
 Most alternative spellings or formats of gene names are handled within this script's normalisation. 
 If accessions you want to test contain very different names for the same gene (e.g. _pafI_ and _ycf3_), then an alias file should be used.    
 The alias file is a text file containing the canonical gene name and the synonym on the same line separated by a tab.    
-The alias file should be called with the flag `--alias_file`. An example alias file is included [here](https://github.com/phmstone/PlastidGenomeContent/blob/main/Tutorial/exampleFiles/gene_alias.txt).    
+The alias file should be called with the flag `--alias_file`. An example alias file is included [here](https://github.com/phmstone/REGRO/blob/main/Tutorial/exampleFiles/gene_alias.txt).    
 
 #### Outputs
 The main output is the TSV file containing a row for each taxon, one column for GenBank ID, one column for species name, and then a column for each gene tested.    
@@ -177,7 +177,7 @@ In order to include all sequences found as "present" for your taxa of interest, 
 Gene/taxon combinations where no BLAST hit was found are written out in a file called `NoHits.txt`.
 There are two methods available for parsing BLAST results `blastProcessing.py` or `blastProcessing-singleSeq.py`. 
 `blastProcessing.py` merges hits based on their absolute start and end coordinates in the genome, where as `blastProcessing-singleSeq.py` merges hits based on the genomic distance between the hits and will only append the single longest merged sequence.   
-Read the [FAQ](https://github.com/phmstone/PlastidGenomeContent/blob/main/Tutorial/FAQs.md) if you're not sure which one to use. 
+Read the [FAQ](https://github.com/phmstone/REGRO/blob/main/Tutorial/FAQs.md) if you're not sure which one to use. 
 
 
 `blastProcessing.py`
