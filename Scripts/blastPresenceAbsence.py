@@ -131,9 +131,14 @@ if args.fastaMode:
         if gene not in gene_names:
             continue
 
-        # validate header format (no forbidden chars)
-        if any(c in header for c in ["|", ":", " "]):
-            raise ValueError(f"Invalid FASTA header: {header}")
+        # validate header format (no forbidden characterss)
+        # use the "|" character for parsing blast hits later on down the line
+        forbiddenCharacters = {"|"}
+        invalidHeader = [c for c in header if c in forbiddenCharacters]
+        if invalidHeader:
+            raise ValueError(
+                f"Invalid FASTA header: {header} \n"
+                f"Forbidden characters found: {sorted(set(invalidHeader))}")
 
         outfile = os.path.join(args.reference_outdir, f"{gene}.fasta")
         with open(outfile, "a") as out:
