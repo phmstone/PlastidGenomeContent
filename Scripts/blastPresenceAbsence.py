@@ -151,7 +151,9 @@ if args.fastaMode:
     if missing:
         raise ValueError(
             "ERROR: Missing reference sequences for genes:\n" +
-            "\n".join(sorted(missing)))
+            "\n".join(sorted(missing)) + "\n" +
+            "Make sure that you have reference IDs that have all of the genes in the gene list annotated as present \n" +
+            "If you are having trouble finding such accessions then try using --fastaMode instead")
 
     print(f"Loaded reference sequences for {len(genes_found)} genes")
 
