@@ -140,12 +140,12 @@ This script downloads fasta files for the plastid genomes of all sequences with 
 BLAST is performed using gene sequences from "reference sequences" as queries.
 
 #### Inputs
-Reference sequences should be supplied to act as query sequences for the BLAST searches. The reference sequences should have functional copies of all the genes you are testing. Ideally they are closely related taxonomically.    
+Reference sequences should be supplied to act as query sequences for the BLAST searches. Each of the reference sequences should all of the genes you are testing annotated as present on GenBank. Ideally they are closely related taxonomically. It is not enough to only have copies of all genes present through a combination of GenBank accessions.    
 An example file containing some GenBank IDs for sequences containing all 113 of the default angiosperm plastid genes is included (`referenceIDs.txt`)    
-The reference sequences should be identified by their GenBank IDs and the reference sequence file should have one GenBank ID per line in a .txt file.    
-If some of the sequences supplied in the original GenBank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST.    
-If you are having trouble finding a GenBank accession that has all genes you want to test, then you could remove genes from the gene list, or run in `--fastaMode`. 
-Make a FASTA file containing sequences for all the genes in your gene list. Name each sequence starting with the gene name, and include any identifying information after an underscore. 
+The reference sequences should be identified by their GenBank IDs and the reference sequence file should have one GenBank ID per line in a .txt file. REGRO will work with as many or as few reference sequences as input, but using many reference sequences will slow down this step using BLAST.       
+If some of the sequences supplied in the original GenBank ID list for testing contain functional copies of all the genes, then this script will enable them to be used as references for BLAST, and it's not necessary to provide a file of reference sequence GenBank IDs.    
+If you are having trouble finding a GenBank accession that has all of genes you want to test annotated is present, then you could remove genes from the gene list, or run in `--fastaMode`. 
+To run in `--fastaMode` make a FASTA file containing sequences for all the genes in your gene list. Name each sequence starting with the gene name, and include any identifying information after an underscore. Do not use the "|" character in the sequence names. 
 
 #### Outputs
 Fasta files from the GenBank sequences in the original .txt file list, BLAST directories, BLAST results, and .gb files for the "reference" sequences are all produced and organised automatically in directories.     
