@@ -1,7 +1,7 @@
 # REGRO Tutorial
 
 This tutorial will go through REGRO step by step using discovery mode to investigate plastid genome degradation in autotrophic and mycoheterotrophic taxa in Ericales.
-All necessary files can be found in the [example files directory](https://github.com/phmstone/REGRO/tree/main/Tutorial/exampleFiles).
+All necessary files can be found in the [example files directory](https://github.com/phmstone/REGRO/tree/main/ExampleFiles).
 
 ## I. Installation and prerequisites
 
