@@ -15,6 +15,11 @@ REGRO is designed for users who are comfortable in the command line environment.
 Some useful tutorials for biologists getting started using the command line can be found [here](https://github.com/mossmatters/introToCmdLine/blob/master/introToCmdLine.pdf) and [here](https://datacarpentry.github.io/shell-genomics/). 
 Work through these first if you feel you need more experience before using REGRO.
 
+### Pipeline diagram
+
+![Flowchart diagram for REGRO showing inputs, outputs, script order, and optional steps]
+(/Images/pipeline.svg)
+
 
 ### Installation 
 
@@ -27,7 +32,7 @@ cd REGRO
 ```
 
 **Download as a ZIP**    
-Click the Code button on the GitHub repository page.
+Click the green Code button on the GitHub repository page.
 Select Download ZIP.
 Extract the archive and navigate to the directory.
 
