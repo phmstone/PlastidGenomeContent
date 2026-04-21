@@ -17,8 +17,7 @@ Work through these first if you feel you need more experience before using REGRO
 
 ### Pipeline diagram
 
-![Flowchart diagram for REGRO showing inputs, outputs, script order, and optional steps]
-(/Images/pipeline.svg)
+![Flowchart diagram for REGRO showing inputs, outputs, script order, and optional steps](/Images/pipeline.svg)
 
 
 ### Installation 
