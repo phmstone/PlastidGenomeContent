@@ -16,7 +16,7 @@ Some useful tutorials for biologists getting started using the command line can 
 Work through these first if you feel you need more experience before using REGRO.
 
 
-### Installation and prerequisites
+### Installation 
 
 You can obtain REGRO in one of the following ways.
 
@@ -36,6 +36,8 @@ Extract the archive and navigate to the directory.
 wget https://github.com/phmstone/REGRO/archive/refs/heads/main.zip    
 unzip main.zip
 ```
+
+### Prerequisites 
 
 **Required dependencies**  
 * BLAST
