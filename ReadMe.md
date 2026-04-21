@@ -8,7 +8,7 @@ Further scripts are included to find genes and gene fragments that may have been
 
 
 Go to the [tutorial](https://github.com/phmstone/REGRO/tree/main/Tutorial) for a guide on how to run REGRO.
-If you have questions, please check the [FAQ page](https://github.com/phmstone/REGRO/blob/main/Tutorial/FAQs.md) before raising an issue.
+If you have questions, please check the [FAQ page](https://github.com/phmstone/REGRO/blob/main/FAQs.md) before raising an issue.
 
 
 REGRO is designed for users who are comfortable in the command line environment.
